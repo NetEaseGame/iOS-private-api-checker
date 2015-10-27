@@ -1,4 +1,5 @@
 eclipse.preferences.version=1
+encoding//api/api_helpers.py=utf-8
 encoding//api/api_utils.py=utf-8
 encoding//db/api_dbs.py=utf-8
 encoding//db/dsidx_dbs.py=utf-8

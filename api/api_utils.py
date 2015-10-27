@@ -6,6 +6,8 @@ Framework下的头文件里的api = 有文档的api + 没有文档的api
 '''
 from db import dsidx_dbs
 import os
+import api
+from api import api_helpers
 
 def framework_dump_header_apis(sdk, framework_folder):
     '''
@@ -19,6 +21,8 @@ def framework_header_apis(sdk, framework_folder):
     '''
     get all public frameworks' header files(documented)
     '''
+    framework_apis = []
+    
     def iterate_dir(framework, prefix, path):
         files = []
         for f in os.listdir(path):
@@ -28,8 +32,9 @@ def framework_header_apis(sdk, framework_folder):
                 files += iterate_dir(framework, prefix + f + "/", os.path.join(path, f))
         return files
     all_headers = []
-
-    for framework in os.listdir(framework_folder):
+    
+    frameworks = os.listdir(framework_folder)
+    for framework in frameworks:
         if framework.endswith(".framework"):
             header_path = framework_folder + framework +"/Headers/"
             if os.path.exists(header_path):
@@ -37,8 +42,26 @@ def framework_header_apis(sdk, framework_folder):
                 #    file_path = header_path + header
                 #    allpaths.append((framework, header, file_path))
                 all_headers += iterate_dir(framework, "", os.path.join(framework_folder, header_path))
-                
-    return all_headers
+    
+    for header in all_headers:
+        #get apis from .h file
+        apis = api_helpers.get_apis_of_file(header[2])
+        
+        for api in apis:
+            class_name = api["class"] if api["class"] != "ctype" else header[1]
+            method_list = api["methods"]
+            m_type = api["type"]
+            for m in method_list:
+                tmp_api = {}
+                tmp_api['api_name'] = m
+                tmp_api['class_name'] = class_name
+                tmp_api['type'] = m_type
+                tmp_api['header_file'] = header[1]
+                tmp_api['sdk'] = sdk
+                tmp_api['framework'] = header[0]
+                framework_apis.append(tmp_api)
+               
+    return framework_apis
 
 #没有文档的api
 def undocument_apis(sdk):

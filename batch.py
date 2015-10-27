@@ -19,8 +19,14 @@ def rebuild_document_api(sdk, docset):
     return api_dbs.insert_document_dbs(document_apis)
 
 
+def rebuild_framework_header_api(sdk, framework_folder):
+    framework_header_apis = api_utils.framework_header_apis(sdk, framework_folder)
+    for api in framework_header_apis:
+        print api
+
 if __name__ == '__main__':
     #重建sdk=7.0的有文档api
-    print rebuild_document_api('7.0', 'docSet.dsidx')
+#     print rebuild_document_api('7.0', 'docSet.dsidx')
+    rebuild_framework_header_api('7.0', 'E:/Eclipse_WS/iOS-private-api-checker/tmp/Frameworks/')
 
     
