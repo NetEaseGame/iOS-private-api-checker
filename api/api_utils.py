@@ -10,7 +10,7 @@ import api
 from api import api_helpers
 from dump import class_dump_utils
 
-def framework_dump_header_apis(sdk, framework_folder):
+def framework_dump_apis(sdk, framework_folder):
     '''
     class-dump Framework下的库生成的头文件中的api
     sdk: sdk version
@@ -28,7 +28,7 @@ def framework_dump_header_apis(sdk, framework_folder):
 #             print rst, out_path
 
     #分析frame，将头文件输出到tmp/pub-headers目录
-    _dump_frameworks(framework_folder, 'pub-headers')
+    framework_header_folder = _dump_frameworks(framework_folder, 'pub-headers')
 #     all_header_paths = []
 #     
 #     #分析处理后framework .h文件，获得api
@@ -39,7 +39,7 @@ def framework_dump_header_apis(sdk, framework_folder):
 #                 all_header_paths += iterate_dir(framework, "", header_path)
     
     #得到.h文件
-    all_headers = _get_headers_from_path(framework_folder)
+    all_headers = _get_headers_from_path(framework_header_folder)
     #解析文件内容，获得api
     framework_apis = _get_apis_from_headers(sdk, all_headers)
     
@@ -94,13 +94,13 @@ def document_apis(sdk, db_path):
         doc_apis.append({'api_name': api['ZTOKENNAME'], 'class_name': container_name, 'type': api['ZTOKENTYPE'], 'header_file': header_path, 'framework': framework_name, 'sdk': sdk})
     return doc_apis
 
-def private_framework_apis(sdk, framework_folder):
+def private_framework_dump_apis(sdk, framework_folder):
     '''
     PrivateFramework下的api
     '''
-    _dump_frameworks(framework_folder, 'pri-headers')
+    framework_header_folder = _dump_frameworks(framework_folder, 'pri-headers')
     #得到.h文件
-    all_headers = _get_headers_from_path(framework_folder)
+    all_headers = _get_headers_from_path(framework_header_folder)
     #解析文件内容，获得api
     framework_apis = _get_apis_from_headers(sdk, all_headers)
     
@@ -139,9 +139,10 @@ def _get_headers_from_path(framework_folder):
     all_headers_path = []
     
     frameworks = os.listdir(framework_folder)
+    print frameworks
     for framework in frameworks:
         if framework.endswith(".framework"):
-            header_path = framework_folder + framework +"/Headers/"
+            header_path = os.path.join(os.path.join(framework_folder, framework), 'Headers')
             if os.path.exists(header_path):
                 all_headers_path += iterate_dir(framework, "", os.path.join(framework_folder, header_path))
     
@@ -182,6 +183,5 @@ def _dump_frameworks(framework_folder, prefix):
             out_path = os.path.join(headers_path, framework)
             out_path =  os.path.join(out_path, 'Headers') #构造目录结果： /tmp/xxx.framework/Headers/xx.h
             rst = class_dump_utils.dump_framework(frame_path, out_path)
-            print rst, out_path
-    return True
+    return headers_path
             

@@ -6,7 +6,7 @@ class-dump操作类
 '''
 import subprocess
 
-class_dump_path = "/usr/local/bin/class-dump" #class-dump所在的位置
+class_dump_path = "/Users/summer-wj/code/svn/iOS-private-api-checker/class-dump" #class-dump所在的位置
 
 dump_cmd = class_dump_path + " -H %s -o %s" # dump cmd模板字符串
 

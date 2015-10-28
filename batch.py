@@ -5,6 +5,7 @@ Created on 2015年10月27日
 @author: hzwangzhiwei
 '''
 from db import api_dbs
+from db import other_dbs
 from api import api_utils
 from time import sleep
 
@@ -29,10 +30,37 @@ def rebuild_framework_header_api(sdk, framework_folder):
     
     return api_dbs.insert_apis('framework_header_apis', framework_header_apis)
 
+
+def rebuild_dump_framework_api(sdk, framework_folder):
+    api_dbs.delete_apis_by_sdk('framework_dump_apis', sdk)
+    
+    framework_dump_header_apis = api_utils.framework_dump_apis(sdk, framework_folder)
+    for api in framework_dump_header_apis:
+        print api
+    
+    return api_dbs.insert_apis('framework_dump_apis', framework_dump_header_apis)
+
+def rebuild_dump_private_framework_api(sdk, framework_folder):
+    api_dbs.delete_apis_by_sdk('private_framework_dump_apis', sdk)
+    
+    pri_framework_dump_apis = api_utils.private_framework_dump_apis(sdk, framework_folder)
+    for api in pri_framework_dump_apis:
+        print api
+    
+    return api_dbs.insert_apis('private_framework_dump_apis', pri_framework_dump_apis)
+
+
 if __name__ == '__main__':
+    #print other_dbs.create_some_table()
+    #sleep(5)
     #重建sdk=7.0的有文档api
     #print rebuild_document_api('7.0', 'docSet.dsidx')
-    sleep(5)
-    print rebuild_framework_header_api('7.0', 'E:/Eclipse_WS/iOS-private-api-checker/tmp/Frameworks/')
+    #sleep(5)
+    #print rebuild_framework_header_api('7.0', "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator8.4.sdk/System/Library/Frameworks/")
 
-    
+    print rebuild_dump_framework_api('7.0', "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator8.4.sdk/System/Library/Frameworks/")
+    #print rebuild_dump_private_framework_api('7.0', "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator8.4.sdk/System/Library/PrivateFrameworks/")
+
+
+
+
