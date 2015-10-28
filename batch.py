@@ -59,7 +59,7 @@ if __name__ == '__main__':
     #print rebuild_framework_header_api('7.0', "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator8.4.sdk/System/Library/Frameworks/")
 
     print rebuild_dump_framework_api('7.0', "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator8.4.sdk/System/Library/Frameworks/")
-    #print rebuild_dump_private_framework_api('7.0', "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator8.4.sdk/System/Library/PrivateFrameworks/")
+    print rebuild_dump_private_framework_api('7.0', "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator8.4.sdk/System/Library/PrivateFrameworks/")
 
 
 

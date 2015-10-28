@@ -69,9 +69,9 @@ def create_some_table():
            "sdk varchar,"
            "framework varchar)")
 
-    #SqliteHandler().exec_sql(sql1, ())
-    #SqliteHandler().exec_sql(sql2, ())
-    #SqliteHandler().exec_sql(sql3, ())
-    #SqliteHandler().exec_sql(sql4, ())
-    #SqliteHandler().exec_sql(sql5, ())
+    SqliteHandler().exec_sql(sql1, ())
+    SqliteHandler().exec_sql(sql2, ())
+    SqliteHandler().exec_sql(sql3, ())
+    SqliteHandler().exec_sql(sql4, ())
+    SqliteHandler().exec_sql(sql5, ())
     SqliteHandler().exec_sql(sql6, ())
