@@ -6,7 +6,7 @@ iOS private api检查入口
 '''
 import os
 from dump import otool_utils
-from api import app_utils
+from api import app_utils, api_utils
 from db import api_dbs
 
 def check(ipa_path):
@@ -31,12 +31,12 @@ def check(ipa_path):
     left = strings - app_varibles #去除一些关键字，剩余app中的一些关键词
     
     api_set = api_dbs.get_private_api_list() #数据库中的私有api
-    inter = left.intersection(api_set) # app中的api和数据库中的私有api取交集，获得app中的私有api关键字数据
+    inter = api_utils.intersection_api(left, api_set) # app中的api和数据库中的私有api取交集，获得app中的私有api关键字数据
     
     app_methods = app_utils.get_app_methods(app) #app中的方法名
     
-    methods_in_app = inter.intersection(app_methods) #app中的私有方法
-    methods_not_in_app = inter - methods_in_app # 不在app中的私有方法
+    methods_in_app = api_utils.intersection_api(inter, app_methods) #app中的私有方法
+    methods_not_in_app = []#inter - methods_in_app # 不在app中的私有方法
     
     return methods_in_app, methods_not_in_app, private
 
@@ -63,5 +63,5 @@ if __name__ == '__main__':
     print "=" * 50
     print len(c), "Private Framework in App:"
     print "*" * 50
-    for cc in c:
-        print cc
+    #for cc in c:
+    #    print cc
