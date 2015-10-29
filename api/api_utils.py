@@ -197,9 +197,9 @@ def deduplication_api_list(apis):
     
     apis = sorted(apis, key = api_gourpby)
 
-    for g, l in groupby(api, key = api_gourpby):
+    for g, l in groupby(apis, key = api_gourpby):
         print g
-        print list(l)
+        l = list(l)
         if l and len(l) > 0:
             new_apis.append(l[0])
     
