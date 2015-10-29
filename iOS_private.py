@@ -30,7 +30,7 @@ def check(ipa_path):
     
     left = strings - app_varibles #去除一些关键字，剩余app中的一些关键词
     
-    api_set = api_dbs.get_api_list() #数据库中的私有api
+    api_set = api_dbs.get_private_api_list() #数据库中的私有api
     inter = left.intersection(api_set) # app中的api和数据库中的私有api取交集，获得app中的私有api关键字数据
     
     app_methods = app_utils.get_app_methods(app) #app中的方法名
@@ -42,7 +42,7 @@ def check(ipa_path):
 
 
 if __name__ == '__main__':
-    ipa_path = "E:/Eclipse_WS/iOS-private-api-checker/tmp/ljsg.ipa"
+    ipa_path = "/Users/summer-wj/code/svn/iOS-private-api-scanner/ljsg.ipa"
 #     cur_dir = os.getcwd()
 #     dest = os.path.join(cur_dir, 'tmp')
 #     app_path = app_utils.unzip_ipa(ipa_path, dest)
