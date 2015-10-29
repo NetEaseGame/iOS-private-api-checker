@@ -60,14 +60,6 @@ def create_some_table():
            "sdk varchar,"
            "framework varchar)")
 
-    #public framework 中dump出来的private api，全部为私有api， sql1 - sql2
-    sql7 = ("create table framework_dump_private_apis("
-           "api_name varchar,"
-           "class_name varchar,"
-           "type varchar,"
-           "header_file varchar,"
-           "sdk varchar,"
-           "framework varchar)")
 
     SqliteHandler().exec_sql(sql1, ())
     SqliteHandler().exec_sql(sql2, ())

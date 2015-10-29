@@ -1,12 +1,14 @@
 eclipse.preferences.version=1
 encoding//api/api_helpers.py=utf-8
 encoding//api/api_utils.py=utf-8
+encoding//api/app_utils.py=utf-8
 encoding//db/api_dbs.py=utf-8
 encoding//db/dsidx_dbs.py=utf-8
 encoding//db/mysql_utils.py=utf-8
 encoding//db/other_dbs.py=utf-8
 encoding//db/sqlite_utils.py=utf-8
 encoding//dump/class_dump_utils.py=utf-8
-encoding/batch.py=utf-8
+encoding//dump/otool_utils.py=utf-8
+encoding/build_api_db.py=utf-8
 encoding/config.py=utf-8
 encoding/iOS_private.py=utf-8

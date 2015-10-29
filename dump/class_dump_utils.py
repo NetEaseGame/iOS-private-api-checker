@@ -17,4 +17,13 @@ def dump_framework(frame_path, out_path):
     cmd = dump_cmd % (frame_path, out_path)
     ret = subprocess.call(cmd.split())
     if ret != 0:
-        print frame_path
+        return frame_path
+    return ""
+    
+def dump_app(app_path):
+    '''
+    get all private variables, properties, and interface name
+    '''
+    class_dump = class_dump_path + " %s" % app_path
+    dump_result = subprocess.check_output(class_dump.split())
+    return dump_result

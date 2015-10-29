@@ -250,33 +250,33 @@ def extract(text):
 
 
 #not used
-def extract_pri(filename):
-    struct = re.compile("^struct (\w*).*")
-    typedef = re.compile("^} (\w*);")
-    method = re.compile("^[+-] \([ *\w]*\)\w+[;:].*")
-    method_args = re.compile("(\w+:)\([\w *]*\)\w+ ?")
-    method_no_args = re.compile("^[+-] \( *\w*\)(\w*);")
-    interface = re.compile("^@interface (\w*).*")
-    result = set()
-    f = open(filename)
-    for line in f:
-        m = method.search(line)
-        if m:
-            args = re.findall(method_args, line)
-            if len(args) > 0:
-                result.add("".join(args))
-            else:
-                no_args = method_no_args.search(line)
-                if no_args:
-                    result.add(no_args.groups()[0])
-            continue
-    f.close()
-    return result
+# def extract_pri(filename):
+#     struct = re.compile("^struct (\w*).*")
+#     typedef = re.compile("^} (\w*);")
+#     method = re.compile("^[+-] \([ *\w]*\)\w+[;:].*")
+#     method_args = re.compile("(\w+:)\([\w *]*\)\w+ ?")
+#     method_no_args = re.compile("^[+-] \( *\w*\)(\w*);")
+#     interface = re.compile("^@interface (\w*).*")
+#     result = set()
+#     f = open(filename)
+#     for line in f:
+#         m = method.search(line)
+#         if m:
+#             args = re.findall(method_args, line)
+#             if len(args) > 0:
+#                 result.add("".join(args))
+#             else:
+#                 no_args = method_no_args.search(line)
+#                 if no_args:
+#                     result.add(no_args.groups()[0])
+#             continue
+#     f.close()
+#     return result
 
 if __name__ == '__main__':
-    pri = extract_pri('E:/Eclipse_WS/iOS-private-api-checker/tmp/Frameworks/UIKit.framework/Headers/UIToolbar.h')
+#     pri = extract_pri('E:/Eclipse_WS/iOS-private-api-checker/tmp/Frameworks/UIKit.framework/Headers/UIToolbar.h')
     
-    print list(pri)
+#     print list(pri)
     
     pub = get_apis_of_file('E:/Eclipse_WS/iOS-private-api-checker/tmp/Frameworks/UIKit.framework/Headers/UIToolbar.h')
     print pub[0]['methods']

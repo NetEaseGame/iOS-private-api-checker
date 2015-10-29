@@ -9,6 +9,7 @@ import os
 import api
 from api import api_helpers
 from dump import class_dump_utils
+from itertools import groupby
 
 def framework_dump_apis(sdk, framework_folder):
     '''
@@ -182,6 +183,24 @@ def _dump_frameworks(framework_folder, prefix):
             frame_path = os.path.join(framework_folder, framework)
             out_path = os.path.join(headers_path, framework)
             out_path =  os.path.join(out_path, 'Headers') #构造目录结果： /tmp/xxx.framework/Headers/xx.h
-            rst = class_dump_utils.dump_framework(frame_path, out_path)
+            class_dump_utils.dump_framework(frame_path, out_path)
     return headers_path
-            
+
+
+#api去重
+def deduplication_api_list(apis):
+    
+    def api_gourpby(api):
+        return api['api_name'] + '/' + api['class_name']
+    
+    new_apis = []
+    
+    apis = sorted(apis, key = api_gourpby)
+
+    for g, l in groupby(api, key = api_gourpby):
+        print g
+        print list(l)
+        if l and len(l) > 0:
+            new_apis.append(l[0])
+    
+    return new_apis
