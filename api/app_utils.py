@@ -25,6 +25,12 @@ def get_executable_file(path):
     '''
     info:从ipa中解压出Payload目录中的xxx.app，扫描其中的文件，寻找 Mach-O 文件的路径
     '''
+    for f in os.listdir(path):
+        #TODO
+        if f != '.DS_Store':
+            path = os.path.join(path, f)
+            break
+
     regex = re.compile(".*?Mach-O.*")
     for f in os.listdir(path):
         cmd = "file -b %s" % os.path.join(path, f)
@@ -45,7 +51,7 @@ def get_app_strings(app_path):
     strings 的主要用途是确定非文本文件的包含的文本内容。
     """
 
-    cmd = "strings %s" % app_path
+    cmd = "/usr/bin/strings %s" % app_path
     output = subprocess.check_output(cmd.split())
     
     strings_file_name  = os.path.basename(app_path) or 'strings'
