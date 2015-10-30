@@ -35,6 +35,11 @@ def get_framework_dump_apis(sdk):
     params = (sdk, )
     return SqliteHandler().exec_select(sql, params)
 
+def get_framework_private_apis():
+    sql = "select * from framework_private_apis group by api_name;"
+    params = ()
+    return SqliteHandler().exec_select(sql, params)
+
 
 def is_api_exist_in(table_name, api_name, api_class, sdk):
     sql = "select * from " + table_name + " where api_name = ? and class_name = ? and sdk = ?;"

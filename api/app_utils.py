@@ -111,6 +111,7 @@ def get_app_methods(app):
     
     ret_methods = set()
     methods = api_helpers.extract(dump_result)
-    for m in methods:
-        ret_methods = ret_methods.union(set(m["methods"]))
-    return ret_methods
+    #for m in methods:
+    #    ret_methods = ret_methods.union(set(m["methods"]))
+    #保留class_name信息
+    return methods

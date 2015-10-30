@@ -16,8 +16,8 @@ def rebuild_document_api(sdk, docset):
     api_dbs.delete_apis_by_sdk('document_apis', sdk)
     
     document_apis = api_utils.document_apis(sdk, docset)
-    for api in document_apis:
-        print api
+    #for api in document_apis:
+    #    print api
         
     return api_dbs.insert_apis('document_apis', document_apis)
 
@@ -26,8 +26,8 @@ def rebuild_framework_header_api(sdk, framework_folder):
     api_dbs.delete_apis_by_sdk('framework_header_apis', sdk)
     
     framework_header_apis = api_utils.framework_header_apis(sdk, framework_folder)
-    for api in framework_header_apis:
-        print api
+    #for api in framework_header_apis:
+    #    print api
     
     return api_dbs.insert_apis('framework_header_apis', framework_header_apis)
 
@@ -36,8 +36,8 @@ def rebuild_dump_framework_api(sdk, framework_folder):
     api_dbs.delete_apis_by_sdk('framework_dump_apis', sdk)
     
     framework_dump_header_apis = api_utils.framework_dump_apis(sdk, framework_folder)
-    for api in framework_dump_header_apis:
-        print api
+    #for api in framework_dump_header_apis:
+    #    print api
     
     return api_dbs.insert_apis('framework_dump_apis', framework_dump_header_apis)
 
@@ -45,13 +45,15 @@ def rebuild_dump_private_framework_api(sdk, framework_folder):
     api_dbs.delete_apis_by_sdk('private_framework_dump_apis', sdk)
     
     pri_framework_dump_apis = api_utils.private_framework_dump_apis(sdk, framework_folder)
-    for api in pri_framework_dump_apis:
-        print api
+    pri_framework_dump_apis = api_utils.deduplication_api_list(pri_framework_dump_apis)
+    #for api in pri_framework_dump_apis:
+    #    print api
     
     return api_dbs.insert_apis('private_framework_dump_apis', pri_framework_dump_apis)
 
 
 def rebuild_sdk_private_api(sdk_version):
+    api_dbs.delete_apis_by_sdk('framework_private_apis', sdk_version['sdk'])
     api_dbs.delete_apis_by_sdk('private_apis', sdk_version['sdk'])
 #     print rebuild_framework_header_api(sdk_version['sdk'], sdk_version['framework'])
 #     print rebuild_dump_framework_api(sdk_version['sdk'], sdk_version['framework'])
@@ -60,6 +62,7 @@ def rebuild_sdk_private_api(sdk_version):
     #通过计算，获得私有api，并保存到数据库汇总
     #1. private_framework_api 转存到private表中
     private_framework_apis = api_dbs.get_private_framework_dump_apis(sdk_version['sdk'])
+    
     print 'One private api. count: ', api_dbs.insert_apis('private_apis', private_framework_apis)
     #2. framework_dump - framework_header
     #3. framework_dump中_开头的api
@@ -79,17 +82,18 @@ def rebuild_sdk_private_api(sdk_version):
         else:
             print 'api is private in public framework'
             framework_dump_private_apis.append(api)
-    framework_dump_private_apis = framework_dump_private_apis + list(private_framework_apis)
+    #framework_dump_private_apis = framework_dump_private_apis + list(private_framework_apis)
     print 'private api lengh:', len(framework_dump_private_apis)
     print 'start group by...'
     framework_dump_private_apis = api_utils.deduplication_api_list(framework_dump_private_apis)
     print 'deduplication private api len:', len(framework_dump_private_apis)
-    
     rst = api_dbs.insert_apis('private_apis', framework_dump_private_apis)
-    print 'insert into db, len:', rst
+    print 'insert into db framework_private_apis, len:', rst
+    rst = api_dbs.insert_apis('framework_private_apis', framework_dump_private_apis)
+    print 'insert into db private_apis, len:', rst
     
 if __name__ == '__main__':
-#     print other_dbs.create_some_table()
+    #print other_dbs.create_some_table()
 #     重建sdk=8.4的有文档api
 #     print rebuild_document_api('8.4', 'docSet.dsidx')
     
