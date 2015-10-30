@@ -207,7 +207,6 @@ def deduplication_api_list(apis):
 
 
 def _apis_2_dict(apis):
-    print apis
     apis_dict = {}
     if apis:
         for api in apis:
@@ -235,12 +234,16 @@ def intersection_list_and_api(l, apis):
     '''
     return intersection of api_name list and api dict list
     '''
+    #def _apis_2_api_dict(apis):
+
     new_apis = []
-    apis_dict = _apis_2_dict(apis)
+    new_methods = set()
+    #apis_dict = _apis_2_dict(apis)
 
-    for api_tmp in l:
-        api_hash = api_tmp['api_name'] + '/' + api_tmp['class_name']
-        if apis_dict.get(api_hash, None):
+    for api_tmp in apis:
+        api_hash = api_tmp['api_name']
+        if api_hash in l:
             new_apis.append(api_tmp)
+            new_methods.add(api_hash)
 
-    return new_apis
+    return new_apis, new_methods
