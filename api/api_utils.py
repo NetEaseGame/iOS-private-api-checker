@@ -237,13 +237,13 @@ def intersection_list_and_api(l, apis):
     #def _apis_2_api_dict(apis):
 
     new_apis = []
-    new_methods = set()
+    #new_methods = set()
     #apis_dict = _apis_2_dict(apis)
 
     for api_tmp in apis:
         api_hash = api_tmp['api_name']
         if api_hash in l:
             new_apis.append(api_tmp)
-            new_methods.add(api_hash)
+            #new_methods.add(api_hash)
 
-    return new_apis, new_methods
+    return new_apis

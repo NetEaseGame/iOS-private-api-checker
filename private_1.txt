@@ -1,0 +1,10 @@
+{'class_name': 'CLLocationManagerDelegate', 'framework': '', 'api_name': 'locationManager:didFinishDeferredUpdatesWithError:', 'header_file': '', 'type': 'protocol', 'sdk': ''}
+{'class_name': 'CLLocationManagerDelegate', 'framework': '', 'api_name': 'locationManager:didStartMonitoringForRegion:', 'header_file': '', 'type': 'protocol', 'sdk': ''}
+{'class_name': 'CLLocationManagerDelegate', 'framework': '', 'api_name': 'locationManager:rangingBeaconsDidFailForRegion:withError:', 'header_file': '', 'type': 'protocol', 'sdk': ''}
+{'class_name': 'CLLocationManagerDelegate', 'framework': '', 'api_name': 'locationManager:didRangeBeacons:inRegion:', 'header_file': '', 'type': 'protocol', 'sdk': ''}
+{'class_name': 'CLLocationManagerDelegate', 'framework': '', 'api_name': 'locationManager:didDetermineState:forRegion:', 'header_file': '', 'type': 'protocol', 'sdk': ''}
+{'class_name': 'CLLocationManagerDelegate', 'framework': '', 'api_name': 'locationManager:didUpdateToLocation:fromLocation:', 'header_file': '', 'type': 'protocol', 'sdk': ''}
+{'class_name': 'NSURLConnectionDataDelegate', 'framework': '', 'api_name': 'connection:didSendBodyData:totalBytesWritten:totalBytesExpectedToWrite:', 'header_file': '', 'type': 'protocol', 'sdk': ''}
+{'class_name': 'NSURLConnectionDelegate', 'framework': '', 'api_name': 'connection:didCancelAuthenticationChallenge:', 'header_file': '', 'type': 'protocol', 'sdk': ''}
+{'class_name': 'NSURLConnectionDelegate', 'framework': '', 'api_name': 'connection:didReceiveAuthenticationChallenge:', 'header_file': '', 'type': 'protocol', 'sdk': ''}
+{'class_name': 'NSURLConnectionDelegate', 'framework': '', 'api_name': 'connection:canAuthenticateAgainstProtectionSpace:', 'header_file': '', 'type': 'protocol', 'sdk': ''}

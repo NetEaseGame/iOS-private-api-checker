@@ -30,13 +30,28 @@ def check(ipa_path):
     
     left = strings - app_varibles #去除一些关键字，剩余app中的一些关键词
     
-    api_set = api_dbs.get_private_api_list() #数据库中的私有api
-    inter_api, inter_method = api_utils.intersection_list_and_api(left, api_set) # app中的api和数据库中的私有api取交集，获得app中的私有api关键字数据
+    api_set = api_dbs.get_framework_private_apis() #数据库中的私有api
+    inter_api = api_utils.intersection_list_and_api(left, api_set) # app中的api和数据库中的私有api取交集，获得app中的私有api关键字数据
     
     app_methods = app_utils.get_app_methods(app) #app中的方法名
+    app_apis = []
+    for m in app_methods:
+        class_name = m["class"] if m["class"] != "ctype" else 'cur_app'
+        method_list = m["methods"]
+        m_type = m["type"]
+        for m in method_list:
+            tmp_api = {}
+            tmp_api['api_name'] = m
+            tmp_api['class_name'] = class_name
+            tmp_api['type'] = m_type
+            tmp_api['header_file'] = ''
+            tmp_api['sdk'] = ''
+            tmp_api['framework'] = ''
+            app_apis.append(tmp_api)
     
-    methods_in_app = inter_method.intersection(app_methods) #app中的私有方法
-    methods_not_in_app = inter_method - methods_in_app # 不在app中的私有方法
+    
+    methods_in_app = api_utils.intersection_api(inter_api, app_apis) #app中的私有方法
+    methods_not_in_app = inter_api# inter_method - methods_in_app # 不在app中的私有方法
     
     return methods_in_app, methods_not_in_app, private
 
@@ -47,18 +62,23 @@ if __name__ == '__main__':
 #     dest = os.path.join(cur_dir, 'tmp')
 #     app_path = app_utils.unzip_ipa(ipa_path, dest)
 #     print app_path
+    
+    private_1 = open("private_1.txt", "w")
+    private_2 = open("private_2.txt", "w")
+     #将strings内容输出到文件中
+
     a, b, c = check(ipa_path)
     print "=" * 50
     print len(a), "Private Methods in App:"
     print "*" * 50
     for aa in a:
-        print aa
+        print >>private_1, aa
      
     print "=" * 50
     print len(b), "Private Methods not in App, May in Framework Used:"
     print "*" * 50
-    #for bb in b:
-    #    print bb
+    for bb in b:
+        print >>private_2, bb
      
     print "=" * 50
     print len(c), "Private Framework in App:"
