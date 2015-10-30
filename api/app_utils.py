@@ -54,8 +54,11 @@ def get_app_strings(app_path):
     cmd = "/usr/bin/strings %s" % app_path
     output = subprocess.check_output(cmd.split())
     
-    strings_file_name  = os.path.basename(app_path) or 'strings'
+    strings_file_name  = 'strings_' + os.path.basename(app_path) or 'strings'
+    cur_dir = os.getcwd()
+    strings_file_name = os.path.join(cur_dir, "tmp/" + strings_file_name)
     
+
     strings = open(strings_file_name + ".txt", "w")
     print >>strings, output #将strings内容输出到文件中
     return set(output.split())
@@ -108,8 +111,14 @@ def get_app_methods(app):
     info:获得app中的方法
     '''
     dump_result = class_dump_utils.dump_app(app)
+    methods_file_name  = 'method_' + os.path.basename(app) or 'app_methods'
+    cur_dir = os.getcwd()
+    methods_file_name = os.path.join(cur_dir, "tmp/" + methods_file_name)
     
-    ret_methods = set()
+    strings = open(methods_file_name + ".txt", "w")
+    #print methods_file_name
+    print >>strings, dump_result 
+    #ret_methods = set()
     methods = api_helpers.extract(dump_result)
     #for m in methods:
     #    ret_methods = ret_methods.union(set(m["methods"]))

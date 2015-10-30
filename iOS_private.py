@@ -44,27 +44,27 @@ def check(ipa_path):
             tmp_api['api_name'] = m
             tmp_api['class_name'] = class_name
             tmp_api['type'] = m_type
-            tmp_api['header_file'] = ''
-            tmp_api['sdk'] = ''
-            tmp_api['framework'] = ''
+            #tmp_api['header_file'] = ''
+            #tmp_api['sdk'] = ''
+            #tmp_api['framework'] = ''
             app_apis.append(tmp_api)
     
     
-    methods_in_app = api_utils.intersection_api(inter_api, app_apis) #app中的私有方法
+    methods_in_app = api_utils.intersection_api(app_apis, inter_api) #app中的私有方法
     methods_not_in_app = inter_api# inter_method - methods_in_app # 不在app中的私有方法
     
     return methods_in_app, methods_not_in_app, private
 
 
 if __name__ == '__main__':
-    ipa_path = "/Users/summer-wj/code/svn/iOS-private-api-scanner/ljsg.ipa"
+    ipa_path = "/Users/summer-wj/Downloads/h11_resign.ipa"
 #     cur_dir = os.getcwd()
 #     dest = os.path.join(cur_dir, 'tmp')
 #     app_path = app_utils.unzip_ipa(ipa_path, dest)
 #     print app_path
     
-    private_1 = open("private_1.txt", "w")
-    private_2 = open("private_2.txt", "w")
+    private_1 = open("tmp/private_1.txt", "w")
+    private_2 = open("tmp/private_2.txt", "w")
      #将strings内容输出到文件中
 
     a, b, c = check(ipa_path)
@@ -72,6 +72,7 @@ if __name__ == '__main__':
     print len(a), "Private Methods in App:"
     print "*" * 50
     for aa in a:
+        print aa
         print >>private_1, aa
      
     print "=" * 50
