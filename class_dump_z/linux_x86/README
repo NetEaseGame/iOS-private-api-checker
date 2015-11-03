@@ -1,0 +1,10 @@
+The Linux version of class-dump-z is compiled in Linux 2.6.31-14-generic i686 with gcc-4.2.4. The following are the dynamic libraries needed:
+
+	linux-gate.so.1 =>  (0x00bd6000)
+	libstdc++.so.6 => /usr/lib/libstdc++.so.6 (0x00a29000)
+	libm.so.6 => /lib/tls/i686/cmov/libm.so.6 (0x00ea1000)
+	libgcc_s.so.1 => /lib/libgcc_s.so.1 (0x005f1000)
+	libc.so.6 => /lib/tls/i686/cmov/libc.so.6 (0x007f9000)
+	/lib/ld-linux.so.2 (0x0034f000)
+
+Usually it will just run fine on x86 and amd64 systems.

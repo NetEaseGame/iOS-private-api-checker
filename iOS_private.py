@@ -12,22 +12,20 @@ from db import api_dbs
 def check(ipa_path):
     if not os.path.exists(ipa_path):
         #不存在，返回检查结果为空值
-        return [], []
+        return [], [], []
     cur_dir = os.getcwd()
     dest = os.path.join(cur_dir, 'tmp')
     app_path = app_utils.unzip_ipa(ipa_path, dest) #解压ipa，获得xxx.app目录路径
     print app_path
     
     app = app_utils.get_executable_file(app_path)
-    print app
-    
+    #print app
     strings = app_utils.get_app_strings(app) #一般是app中的一些可打印文本
-    
     #app中的私有库和公有库 .framework
     private, public = otool_utils.otool_app(app)
     
     app_varibles = app_utils.get_app_variables(app)
-    
+
     left = strings - app_varibles #去除一些关键字，剩余app中的一些关键词
     
     api_set = api_dbs.get_framework_private_apis() #数据库中的私有api
@@ -57,7 +55,7 @@ def check(ipa_path):
 
 
 if __name__ == '__main__':
-    ipa_path = "/Users/summer-wj/Downloads/h11_resign.ipa"
+    ipa_path = "c:/h17_dis.ipa"
 #     cur_dir = os.getcwd()
 #     dest = os.path.join(cur_dir, 'tmp')
 #     app_path = app_utils.unzip_ipa(ipa_path, dest)
@@ -65,7 +63,7 @@ if __name__ == '__main__':
     
     private_1 = open("tmp/private_1.txt", "w")
     private_2 = open("tmp/private_2.txt", "w")
-     #将strings内容输出到文件中
+    #将strings内容输出到文件中
 
     a, b, c = check(ipa_path)
     print "=" * 50
