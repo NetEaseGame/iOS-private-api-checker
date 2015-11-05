@@ -7,6 +7,7 @@ class-dump操作类
 import subprocess
 from utils import utils
 class_dump_path = utils.get_clas_dump_path()
+print class_dump_path
 
 dump_cmd = class_dump_path + " -H %s -o %s" # dump cmd模板字符串
 

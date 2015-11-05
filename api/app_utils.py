@@ -66,7 +66,14 @@ def get_app_strings(app_path):
 def get_app_variables(app):
     "get all variables, properties, and interface name"
     dump_result = class_dump_utils.dump_app(app)
+
+    var_file_name  = 'dump_var_' + os.path.basename(app) or 'dump_var'
+    cur_dir = os.getcwd()
+    var_file_name = os.path.join(cur_dir, "tmp/" + var_file_name)
     
+    var_file = open(var_file_name + ".txt", "w")
+    print >>var_file, dump_result #将strings内容输出到文件中
+
     interface = re.compile("^@interface (\w*).*")
     protocol = re.compile("@protocoli (\w*)")
     private = re.compile("^\s*[\w <>]* [*]?(\w*)[\[\]\d]*;")
@@ -99,7 +106,7 @@ def get_app_variables(app):
             m = r.groups()
             res.add(m[0])
             res.add("set" + m[0].title() + ":")
-            print "set" + m[0].title() + ":"
+            #print "set" + m[0].title() + ":"
             if m[1] != None:
                 # res.add("V"+m[1])
                 res.add(m[1])

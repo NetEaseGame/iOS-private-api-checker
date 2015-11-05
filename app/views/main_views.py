@@ -5,7 +5,7 @@ Created on 2015年6月16日
 @author: hzwangzhiwei
 '''
 from app import app
-from app.utils import StringUtil, PathUtil
+from app.utils import StringUtil, PathUtil, OtherUtil
 import flask
 from flask.globals import request
 from werkzeug.utils import secure_filename
@@ -40,9 +40,10 @@ def ipa_post():
         #检查ios私有api
         methods_in_app, methods_not_in_app, private = iOS_private.check(ipa_path)
         rst['data']['methods_in_app'] = methods_in_app
-        rst['data']['private_framework'] = private
-        
-    return flask.jsonify(rst)
+        rst['data']['private_framework'] = list(private)
+        os.remove(ipa_path)
+    #print rst
+    return OtherUtil.object_2_dict(rst)
 
 #定义404页面
 @app.errorhandler(404)

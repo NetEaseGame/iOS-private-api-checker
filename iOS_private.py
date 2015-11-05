@@ -19,6 +19,7 @@ def check(ipa_path):
     print app_path
     
     app = app_utils.get_executable_file(app_path)
+    print app
     #print app
     strings = app_utils.get_app_strings(app) #一般是app中的一些可打印文本
     #app中的私有库和公有库 .framework
@@ -29,6 +30,7 @@ def check(ipa_path):
     left = strings - app_varibles #去除一些关键字，剩余app中的一些关键词
     
     api_set = api_dbs.get_framework_private_apis() #数据库中的私有api
+    print 'private length:', len(api_set)
     inter_api = api_utils.intersection_list_and_api(left, api_set) # app中的api和数据库中的私有api取交集，获得app中的私有api关键字数据
     
     app_methods = app_utils.get_app_methods(app) #app中的方法名

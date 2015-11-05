@@ -4,7 +4,7 @@ Created on 2015年11月3日
 
 @author: hzwangzhiwei
 '''
-import sys
+import os, sys
 from config import class_dump_z_path
 
 
@@ -17,15 +17,19 @@ def get_system():
         return 'linux'
     elif system_platform.startswith('win32'):
         return 'win'
-    elif system_platform.startswith('dawin'):
+    elif system_platform.startswith('darwin'):
         return 'mac'
     else:
         return 'iphone'
     
    
-def get_clas_dump_path():
+def get_clas_dump_path(use_what = 'class-dump'):
     '''
     get class-dump-z path
     '''
-    system = get_system()
-    return class_dump_z_path.get(system, 'class-dump-z')
+    if use_what == 'class-dump':
+        cur_dir = os.getcwd()
+        return os.path.join(cur_dir, 'class-dump')
+    else:
+        system = get_system()
+        return class_dump_z_path.get(system, 'class-dump-z')

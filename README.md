@@ -14,8 +14,9 @@
 
 #### 2. 检查ipa私有api ####
 
-修改iOS_private.py main方法中的ipa路径，运行即可。
+1. 修改iOS_private.py main方法中的ipa路径，运行即可。
 
+2. 使用Web上传运行的方式，运行python run_web.py（请先配置flask运行环境），然后浏览器输入127.0.0.1:9527 将ipa拖入上传框等待即可看到检查结果。
 
 
 ### 二、参考项目 ###
