@@ -22,9 +22,13 @@
     <link rel="stylesheet" href="/static/res/css/styles.css">
     <style type="text/css">
     	#ipa_file {
-			border: 2px solid rgb(66,158,158);
-			width: 100%;
-		}
+			 border: 2px solid rgb(66,158,158);
+			 width: 100%;
+		  }
+      #overview section {
+        margin-top: 10px;
+        margin-bottom: 10px;
+      }
     </style>
   </head>
   <body class="mdl-demo mdl-color--grey-100 mdl-color-text--grey-700 mdl-base">
@@ -47,6 +51,17 @@
 					       <span class="note">(文件拖放到这里或者点击选择ipa文件 <strong>检查iOS私有api使用情况</strong>)</span>
       				</div>
       			</form>
+          </section>
+          <section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">
+            <div class="mdl-card mdl-cell mdl-cell--12-col">
+              <ul class="toc">
+                <a href="#">App Name: <span id="app_name"></span></a>
+                <a href="#">App Version: <span id="version"></span></a>
+                <a href="#">Bundle identifier: <span id="bundle_identifier"></span></a>
+                <a href="#">Target os version: <span id="target_os_version"></span></a>
+                <a href="#">Minimum os version: <span id="minimum_os_version"></span></a>
+              </ul>
+            </div>
           </section>
           <section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp" id="api_in_app">
             <div class="mdl-card mdl-cell mdl-cell--12-col">

@@ -5,7 +5,7 @@ Created on 2015年6月16日
 @author: hzwangzhiwei
 '''
 from app import app
-from app.utils import StringUtil, PathUtil, OtherUtil
+from app.utils import StringUtil, PathUtil, OtherUtil, IpaParse
 import flask
 from flask.globals import request
 from werkzeug.utils import secure_filename
@@ -37,6 +37,13 @@ def ipa_post():
         upload_file.save(ipa_path)
         rst['success'] = 1
         rst['data'] = {}
+        #获得ipa信息
+        ipa_parse = IpaParse.IpaParse(ipa_path)
+        rst['data']['app_name'] = ipa_parse.app_name()
+        rst['data']['version'] = ipa_parse.version()
+        rst['data']['bundle_identifier'] = ipa_parse.bundle_identifier()
+        rst['data']['target_os_version'] = ipa_parse.target_os_version()
+        rst['data']['minimum_os_version'] = ipa_parse.minimum_os_version()
         #检查ios私有api
         methods_in_app, methods_not_in_app, private = iOS_private.check(ipa_path)
         rst['data']['methods_in_app'] = methods_in_app

@@ -7,6 +7,14 @@ var myDropzone = new Dropzone("#ipa_file", {
 	success: function(d, data) {
 		data = JSON.parse(data);
 		if (data.success == 1) {
+			//显示app信息
+			$('#app_name').text(data.data.app_name);
+			$('#version').text(data.data.version);
+			$('#bundle_identifier').text(data.data.bundle_identifier);
+			$('#target_os_version').text(data.data.target_os_version);
+			$('#minimum_os_version').text(data.data.minimum_os_version);
+			$('#app_name').text(data.data.app_name);              
+			//显示私有api信息
 			$('#api_in_app div.api_section').remove();
 			for (var i = 0; i < data.data.methods_in_app.length; i++) {
 				var api = data.data.methods_in_app[i];
