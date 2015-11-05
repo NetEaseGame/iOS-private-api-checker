@@ -63,3 +63,5 @@ target/
 
 # custom
 tmp/
+app/static/tmp/
+app/static/upload/*.ipa
