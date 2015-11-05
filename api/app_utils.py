@@ -131,3 +131,26 @@ def get_app_methods(app):
     #    ret_methods = ret_methods.union(set(m["methods"]))
     #保留class_name信息
     return methods
+
+
+def check_architectures(app):
+    '''
+    info检查是否支持64位
+    demo:
+    ljsg: Mach-O universal binary with 2 architectures
+    ljsg (for architecture armv7):  Mach-O executable arm
+    ljsg (for architecture arm64):  Mach-O 64-bit executable
+    '''
+    cmd = "file %s" % app
+    output = subprocess.check_output(cmd.split())
+
+    arcs = [] #architecture detail, eg: armv7, arm64
+
+    lines = output.split("\n")
+    arc_re = re.compile("\(for architecture (\w{1,})\)")
+    for line in lines:
+        r = arc_re.search(line)
+        if r and len(r.groups()) > 0:
+            arcs.append(r.groups()[0])
+
+    return arcs

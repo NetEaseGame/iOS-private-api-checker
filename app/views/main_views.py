@@ -45,9 +45,13 @@ def ipa_post():
         rst['data']['target_os_version'] = ipa_parse.target_os_version()
         rst['data']['minimum_os_version'] = ipa_parse.minimum_os_version()
         #检查ios私有api
-        methods_in_app, methods_not_in_app, private = iOS_private.check(ipa_path)
+        app = iOS_private.get_executable_path(ipa_path)
+        print 'app', app
+        methods_in_app, methods_not_in_app, private = iOS_private.check_private_api(app)
         rst['data']['methods_in_app'] = methods_in_app
         rst['data']['private_framework'] = list(private)
+        #检查ipa 64支持情况
+        rst['data']['arcs'] = iOS_private.check_architectures(app)
         os.remove(ipa_path)
     #print rst
     return OtherUtil.object_2_dict(rst)

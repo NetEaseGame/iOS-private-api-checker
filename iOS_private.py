@@ -9,17 +9,23 @@ from dump import otool_utils
 from api import app_utils, api_utils
 from db import api_dbs
 
-def check(ipa_path):
+
+def get_executable_path(ipa_path):
+    '''
+    info: unzip ipa, get execute app path
+    '''
     if not os.path.exists(ipa_path):
         #不存在，返回检查结果为空值
-        return [], [], []
+        return False
     cur_dir = os.getcwd()
     dest = os.path.join(cur_dir, 'tmp')
+    print dest
     app_path = app_utils.unzip_ipa(ipa_path, dest) #解压ipa，获得xxx.app目录路径
-    print app_path
     
     app = app_utils.get_executable_file(app_path)
-    print app
+    return app
+
+def check_private_api(app):
     #print app
     strings = app_utils.get_app_strings(app) #一般是app中的一些可打印文本
     #app中的私有库和公有库 .framework
@@ -56,8 +62,14 @@ def check(ipa_path):
     return methods_in_app, methods_not_in_app, private
 
 
+def check_architectures(app):
+    arcs = app_utils.check_architectures(app)
+    return arcs
+
+
+
 if __name__ == '__main__':
-    ipa_path = "c:/h17_dis.ipa"
+    ipa_path = "/Users/summer-wj/code/svn/ljsg_for_netease_20150928_resign.ipa"
 #     cur_dir = os.getcwd()
 #     dest = os.path.join(cur_dir, 'tmp')
 #     app_path = app_utils.unzip_ipa(ipa_path, dest)
@@ -67,7 +79,11 @@ if __name__ == '__main__':
     private_2 = open("tmp/private_2.txt", "w")
     #将strings内容输出到文件中
 
-    a, b, c = check(ipa_path)
+    app = get_executable_path(ipa_path)
+    print app
+    arcs = check_architectures(app)
+    print arcs
+    a, b, c = check_private_api(app)
     print "=" * 50
     print len(a), "Private Methods in App:"
     print "*" * 50
@@ -86,3 +102,4 @@ if __name__ == '__main__':
     print "*" * 50
     #for cc in c:
     #    print cc
+    

@@ -13,7 +13,9 @@ var myDropzone = new Dropzone("#ipa_file", {
 			$('#bundle_identifier').text(data.data.bundle_identifier);
 			$('#target_os_version').text(data.data.target_os_version);
 			$('#minimum_os_version').text(data.data.minimum_os_version);
-			$('#app_name').text(data.data.app_name);              
+			$('#app_name').text(data.data.app_name);
+			//显示ipa的架构信息
+			$('#app_arcs').text(data.data.arcs.join(', '))          
 			//显示私有api信息
 			$('#api_in_app div.api_section').remove();
 			for (var i = 0; i < data.data.methods_in_app.length; i++) {
