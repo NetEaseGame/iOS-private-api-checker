@@ -1,7 +1,16 @@
 ## iOS私有API检查工具 ##
 
+私有API检查的原因在于：苹果在app提审的时候，会检查app使用私有api的情况，对于使用了私有api的app，不予通过，这个工具的目地就是在提审之前检查一下，提高通过率。
 
-### 一、如何使用 ###
+### 一、功能 ###
+
+目前功能主要有三：
+
+1. 从ipa中提取一些基本信息，例如app名字，sdk版本，包名等，可以辅助QA日常工作。
+2. ipa架构检查，可以看出是否支持64位架构，可以辅助AppStore提审。
+3. ipa使用私有api情况，可以辅助AppStore提审。
+
+### 二、如何使用 ###
 
 #### 1. 构建私有api库 ####
 
@@ -23,14 +32,14 @@
 ![web_screenshot](screenshot/web_screenshot.png)
 
 
-### 二、参考项目 ###
+### 三、参考项目 ###
 
  - [RuntimeBrowser](https://github.com/nst/RuntimeBrowser/tree/master/tools/ios_headers_history)
  - [iOS-private-api-scanner](https://github.com/mrmign/iOS-private-api-scanner)
  - [iOS-api-scan.md](iOS-api-scan.md)
 
 
-### 三、Note ###
+### 四、Note ###
 
 1. `私有的api ＝ (class-dump Framework下的库生成的头文件中的api - (Framework下的头文件里的api = 有文档的api + 没有文档的api)) + PrivateFramework下的api`。
 2. 私有api在公开的Framework及私有的PrivateFramework都有。
