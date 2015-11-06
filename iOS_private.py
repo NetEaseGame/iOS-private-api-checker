@@ -10,7 +10,7 @@ from api import app_utils, api_utils
 from db import api_dbs
 
 
-def get_executable_path(ipa_path):
+def get_executable_path(ipa_path, pid):
     '''
     info: unzip ipa, get execute app path
     '''
@@ -18,20 +18,22 @@ def get_executable_path(ipa_path):
         #不存在，返回检查结果为空值
         return False
     cur_dir = os.getcwd()
-    dest = os.path.join(cur_dir, 'tmp')
+    dest = os.path.join(cur_dir, 'tmp/' + pid)
+    if not os.path.exists(dest):
+        os.mkdir(dest)
     print dest
     app_path = app_utils.unzip_ipa(ipa_path, dest) #解压ipa，获得xxx.app目录路径
     
     app = app_utils.get_executable_file(app_path)
     return app
 
-def check_private_api(app):
+def check_private_api(app, pid):
     #print app
-    strings = app_utils.get_app_strings(app) #一般是app中的一些可打印文本
+    strings = app_utils.get_app_strings(app, pid) #一般是app中的一些可打印文本
     #app中的私有库和公有库 .framework
     private, public = otool_utils.otool_app(app)
     
-    app_varibles = app_utils.get_app_variables(app)
+    app_varibles = app_utils.get_app_variables(app, pid)
 
     left = strings - app_varibles #去除一些关键字，剩余app中的一些关键词
     
@@ -39,7 +41,7 @@ def check_private_api(app):
     print 'private length:', len(api_set)
     inter_api = api_utils.intersection_list_and_api(left, api_set) # app中的api和数据库中的私有api取交集，获得app中的私有api关键字数据
     
-    app_methods = app_utils.get_app_methods(app) #app中的方法名
+    app_methods = app_utils.get_app_methods(app, pid) #app中的方法名
     app_apis = []
     for m in app_methods:
         class_name = m["class"] if m["class"] != "ctype" else 'cur_app'
@@ -78,12 +80,12 @@ if __name__ == '__main__':
     private_1 = open("tmp/private_1.txt", "w")
     private_2 = open("tmp/private_2.txt", "w")
     #将strings内容输出到文件中
-
-    app = get_executable_path(ipa_path)
+    pid = app_utils.get_unique_str()
+    app = get_executable_path(ipa_path, pid)
     print app
     arcs = check_architectures(app)
     print arcs
-    a, b, c = check_private_api(app)
+    a, b, c = check_private_api(app, pid)
     print "=" * 50
     print len(a), "Private Methods in App:"
     print "*" * 50

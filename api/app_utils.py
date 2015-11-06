@@ -5,7 +5,7 @@ Created on 2015年10月29日
 @author: hzwangzhiwei
 '''
 import re
-import os
+import os, time, datetime, random
 import subprocess
 from api import api_helpers
 from dump import class_dump_utils
@@ -40,7 +40,7 @@ def get_executable_file(path):
     return None
 
 
-def get_app_strings(app_path):
+def get_app_strings(app_path, pid):
     """
     Args:
         app : the full path of the Mach-O file in app
@@ -56,20 +56,20 @@ def get_app_strings(app_path):
     
     strings_file_name  = 'strings_' + os.path.basename(app_path) or 'strings'
     cur_dir = os.getcwd()
-    strings_file_name = os.path.join(cur_dir, "tmp/" + strings_file_name)
+    strings_file_name = os.path.join(cur_dir, "tmp/" + pid + '/' + strings_file_name)
     
 
     strings = open(strings_file_name + ".txt", "w")
     print >>strings, output #将strings内容输出到文件中
     return set(output.split())
 
-def get_app_variables(app):
+def get_app_variables(app, pid):
     "get all variables, properties, and interface name"
     dump_result = class_dump_utils.dump_app(app)
 
     var_file_name  = 'dump_var_' + os.path.basename(app) or 'dump_var'
     cur_dir = os.getcwd()
-    var_file_name = os.path.join(cur_dir, "tmp/" + var_file_name)
+    var_file_name = os.path.join(cur_dir, "tmp/" + pid + '/' + var_file_name)
     
     var_file = open(var_file_name + ".txt", "w")
     print >>var_file, dump_result #将strings内容输出到文件中
@@ -113,14 +113,14 @@ def get_app_variables(app):
     return res
 
 
-def get_app_methods(app):
+def get_app_methods(app, pid):
     '''
     info:获得app中的方法
     '''
     dump_result = class_dump_utils.dump_app(app)
     methods_file_name  = 'method_' + os.path.basename(app) or 'app_methods'
     cur_dir = os.getcwd()
-    methods_file_name = os.path.join(cur_dir, "tmp/" + methods_file_name)
+    methods_file_name = os.path.join(cur_dir, "tmp/" + pid + '/' + methods_file_name)
     
     strings = open(methods_file_name + ".txt", "w")
     #print methods_file_name
@@ -154,3 +154,9 @@ def check_architectures(app):
             arcs.append(r.groups()[0])
 
     return arcs
+
+
+def get_unique_str():
+    #随机的名字，可以用于上传文件等等不重复，但有一定时间意义的名字
+    datetime_str = time.strftime('%Y%m%d%H%M%S',time.localtime())
+    return datetime_str + str(datetime.datetime.now().microsecond / 1000) + str(random.randint(0, 1000))
