@@ -3,7 +3,7 @@ var myDropzone = new Dropzone("#ipa_file", {
 	url: "/ipa_post",
 	maxFilesize: 1024,
 	acceptedFiles: '.ipa',
-	maxFiles: 1,
+	maxFiles: 5,
 	success: function(d, data) {
 		data = JSON.parse(data);
 		if (data.success == 1) {
