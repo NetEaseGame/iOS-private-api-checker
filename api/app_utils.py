@@ -143,7 +143,7 @@ def check_architectures(app):
     '''
     cmd = "file %s" % app
     output = subprocess.check_output(cmd.split())
-    
+    print output
     arcs = [] #architecture detail, eg: armv7, arm64
 
     lines = output.split("\n")
@@ -153,7 +153,13 @@ def check_architectures(app):
         r = arc_re.search(line)
         if r and len(r.groups()) > 0:
             arcs.append(r.groups()[0].replace("):\t", ": "))
-    print arcs
+    
+    if len(arcs) == 0:
+        arc_re = re.compile(":(.*)")
+        for line in lines:
+            r = arc_re.search(line)
+            if r and len(r.groups()) > 0:
+                arcs.append(r.groups()[0].replace("):\t", ": "))
     return arcs
 
 

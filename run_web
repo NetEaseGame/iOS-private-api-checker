@@ -1,1 +1,11 @@
+pids=$(ps -ef|grep gunicorn|grep run_web|awk {'print $2,$3'})
+pidsArray=($pids)
+
+len=${#pidsArray[*]}
+for ((index=0;index<$len;index+=1));do
+    tmp=`expr $index+1`
+    echo ${pidsArray[$index]}
+    kill -9 ${pidsArray[$index]}
+done
+sleep 1
 gunicorn --worker-class=gevent -w 4 -b 0.0.0.0:9527 run_web:app

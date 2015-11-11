@@ -65,3 +65,5 @@ target/
 tmp/
 app/static/tmp/
 app/static/upload/*.ipa
+*.db
+docSet*
