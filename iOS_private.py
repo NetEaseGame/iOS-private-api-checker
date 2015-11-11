@@ -37,7 +37,7 @@ def check_private_api(app, pid):
 
     left = strings - app_varibles #去除一些关键字，剩余app中的一些关键词
     
-    api_set = api_dbs.get_framework_private_apis() #数据库中的私有api
+    api_set = api_dbs.get_private_api_list() #数据库中的私有api
     print 'private length:', len(api_set)
     inter_api = api_utils.intersection_list_and_api(left, api_set) # app中的api和数据库中的私有api取交集，获得app中的私有api关键字数据
     

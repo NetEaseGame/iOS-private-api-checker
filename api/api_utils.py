@@ -17,27 +17,9 @@ def framework_dump_apis(sdk, framework_folder):
     sdk: sdk version
     info: 用class-dump对所有的公开库(/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator7.0.sdk/System/Library/Frameworks)进行逆向工程得到所有的头文件内容。提取每个.h文件中的api得到api集合set_A。
     '''
-#     cur_dir = os.getcwd()
-#     pub_headers_path = os.path.join(cur_dir, "tmp/pub-headers")
-#     #讲frame dump到./tmp/pub_headers目录中
-#     for framework in os.listdir(framework_folder):
-#         if framework.endswith(".framework"):
-#             frame_path = os.path.join(framework_folder, framework)
-#             out_path = os.path.join(pub_headers_path, framework)
-#             out_path =  os.path.join(out_path, 'Headers') #构造目录结果： /tmp/xxx.framework/Headers/xx.h
-#             rst = class_dump_utils.dump_framework(frame_path, out_path)
-#             print rst, out_path
 
     #分析frame，将头文件输出到tmp/pub-headers目录
     framework_header_folder = _dump_frameworks(framework_folder, 'pub-headers')
-#     all_header_paths = []
-#     
-#     #分析处理后framework .h文件，获得api
-#     for framework in os.listdir(pub_headers_path):
-#         if framework.endswith(".framework"):
-#             header_path = os.path.join(pub_headers_path, framework)
-#             if os.path.exists(header_path):
-#                 all_header_paths += iterate_dir(framework, "", header_path)
     
     #得到.h文件
     all_headers = _get_headers_from_path(framework_header_folder)
@@ -60,6 +42,7 @@ def framework_header_apis(sdk, framework_folder):
 #没有文档的api
 def undocument_apis(sdk):
     '''
+    set_C = set_header - set_B
     info:不在文档中的api方法
     '''
     framework_header_apis(sdk) - document_apis(sdk)
@@ -107,7 +90,7 @@ def private_framework_dump_apis(sdk, framework_folder):
     
     return framework_apis 
 
-def all_private_apis(sdk):
+def all_private_apis(sdk, include_private_framework = False):
     '''
     info: 私有的api ＝ (
             class-dump Framework下的库生成的头文件中的api 
@@ -117,12 +100,13 @@ def all_private_apis(sdk):
         + 
         PrivateFramework下的api。
     '''
-    pub_private_apis = framework_dump_header_apis(sdk) - framework_header_apis(sdk)
+    pub_private_apis = framework_dump_apis(sdk) - framework_header_apis(sdk)
     
-    pri_private_apis = private_framework_apis(sdk)
+    if include_private_framework:
+        pri_private_apis = private_framework_apis(sdk)
     
-    return pub_private_apis + pri_private_apis
-
+        return pub_private_apis + pri_private_apis
+    return pub_private_apis
 
 
 #目录迭代器
@@ -140,7 +124,7 @@ def _get_headers_from_path(framework_folder):
     all_headers_path = []
     
     frameworks = os.listdir(framework_folder)
-    print frameworks
+    #print frameworks
     for framework in frameworks:
         if framework.endswith(".framework"):
             header_path = os.path.join(os.path.join(framework_folder, framework), 'Headers')
@@ -198,7 +182,6 @@ def deduplication_api_list(apis):
     apis = sorted(apis, key = api_gourpby)
 
     for g, l in groupby(apis, key = api_gourpby):
-        print g
         l = list(l)
         if l and len(l) > 0:
             new_apis.append(l[0])

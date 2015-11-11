@@ -41,7 +41,7 @@ def get_framework_private_apis():
     return SqliteHandler().exec_select(sql, params)
 
 
-def is_api_exist_in(table_name, api_name, api_class, sdk):
+def is_api_exist_in(table_name, api):
     sql = "select * from " + table_name + " where api_name = ? and class_name = ? and sdk = ?;"
-    params = (api_name, api_class, sdk)
+    params = (api['api_name'], api['class_name'], api['sdk'])
     return SqliteHandler().exec_select_one(sql, params)

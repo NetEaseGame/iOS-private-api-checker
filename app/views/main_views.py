@@ -53,11 +53,13 @@ def ipa_post():
             rst['data']['methods_in_app'] = methods_in_app
             rst['data']['private_framework'] = list(private)
             #检查ipa 64支持情况
-            rst['data']['arcs'] = iOS_private.check_architectures(app)
+            arcs = iOS_private.check_architectures(app)
+            rst['data']['arcs'] = arcs
             
-    except:
+    except Exception, e:
+        print e
         rst['success'] = 0
-        rst['data'] = '检查失败，也许上传的包并非真正的ipa~'
+        rst['data'] = '检查失败，也许上传的包并非真正的ipa，或者系统出现错误！'
     
     if ipa_path and os.path.exists(ipa_path):
         os.remove(ipa_path) #删除上传的包
