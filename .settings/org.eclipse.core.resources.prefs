@@ -18,6 +18,7 @@ encoding//db/other_dbs.py=utf-8
 encoding//db/sqlite_utils.py=utf-8
 encoding//dump/class_dump_utils.py=utf-8
 encoding//dump/otool_utils.py=utf-8
+encoding//utils/report_utils.py=utf-8
 encoding//utils/utils.py=utf-8
 encoding/build_api_db.py=utf-8
 encoding/config.py=utf-8

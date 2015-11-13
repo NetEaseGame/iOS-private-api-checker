@@ -163,6 +163,18 @@ def check_architectures(app):
     return arcs
 
 
+#检查app是否被xcode ghost感染
+xcode_ghost_keyword = "icloud-analysis.com"
+def check_xcode_ghost(app):
+    cmd = "/usr/bin/strings %s" % app
+    output = subprocess.check_output(cmd.split())
+    output = output.replace("\n", "")
+    output = output.replace(" ", "")
+    output = output.replace("\t", "")
+    
+    return xcode_ghost_keyword in output
+    
+
 def get_unique_str():
     #随机的名字，可以用于上传文件等等不重复，但有一定时间意义的名字
     datetime_str = time.strftime('%Y%m%d%H%M%S',time.localtime())

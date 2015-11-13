@@ -27,11 +27,12 @@ def get_executable_path(ipa_path, pid):
     app = app_utils.get_executable_file(app_path)
     return app
 
+#检查私有api，返回三个参数
 def check_private_api(app, pid):
     #print app
     strings = app_utils.get_app_strings(app, pid) #一般是app中的一些可打印文本
     #app中的私有库和公有库 .framework
-    private, public = otool_utils.otool_app(app)
+    private, _ = otool_utils.otool_app(app)
     
     app_varibles = app_utils.get_app_variables(app, pid)
 
@@ -63,11 +64,14 @@ def check_private_api(app, pid):
     
     return methods_in_app, methods_not_in_app, private
 
-
+#检查架构，返回架构数组
 def check_architectures(app):
     arcs = app_utils.check_architectures(app)
     return arcs
 
+#检查xcode ghost，返回bool
+def check_xcode_ghost(app):
+    return app_utils.check_xcode_ghost(app)
 
 
 if __name__ == '__main__':
