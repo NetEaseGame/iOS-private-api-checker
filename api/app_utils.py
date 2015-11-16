@@ -25,19 +25,13 @@ def get_executable_file(path):
     '''
     info:从ipa中解压出Payload目录中的xxx.app，扫描其中的文件，寻找 Mach-O 文件的路径
     '''
-    for f in os.listdir(path):
-        #TODO
-        if f != '.DS_Store':
-            path = os.path.join(path, f)
-            break
 
-    regex = re.compile(".*?Mach-O.*")
-    for f in os.listdir(path):
-        cmd = "file -b %s" % os.path.join(path, f)
-        out = subprocess.check_output(cmd.split())
-        if regex.search(out):
-            return os.path.join(path, f)
-    return None
+    cmd = u"python -mmacholib find %s" % (path)
+    out = subprocess.check_output(cmd.split())
+    out = out.strip().replace('\r\n', '').replace('\n', '')
+
+    return os.path.join(path, out)
+    
 
 
 def get_app_strings(app_path, pid):
@@ -136,30 +130,22 @@ def get_app_methods(app, pid):
 def check_architectures(app):
     '''
     info检查是否支持64位
-    demo:
-    ljsg: Mach-O universal binary with 2 architectures
-    ljsg (for architecture armv7):  Mach-O executable arm
-    ljsg (for architecture arm64):  Mach-O 64-bit executable
+    demo:armv7, arm64, armv7s
     '''
-    cmd = "file %s" % app
-    output = subprocess.check_output(cmd.split())
-    print output
-    arcs = [] #architecture detail, eg: armv7, arm64
+    from macholib import MachO, mach_o
 
-    lines = output.split("\n")
-    #print lines
-    arc_re = re.compile("\(for architecture ([\w\W]{1,})")
-    for line in lines:
-        r = arc_re.search(line)
-        if r and len(r.groups()) > 0:
-            arcs.append(r.groups()[0].replace("):\t", ": "))
-    
-    if len(arcs) == 0:
-        arc_re = re.compile(":(.*)")
-        for line in lines:
-            r = arc_re.search(line)
-            if r and len(r.groups()) > 0:
-                arcs.append(r.groups()[0].replace("):\t", ": "))
+    m = MachO.MachO(app)
+    arcs = []
+    for header in m.headers:
+        cpu_type = header.header.cputype
+        cpu_subtype = header.header.cpusubtype
+        arch = str(mach_o.CPU_TYPE_NAMES.get(cpu_type, cpu_type)).lower()
+        if cpu_type == 12:
+            if cpu_subtype == 9:
+                arch = 'armv7'
+            elif cpu_subtype == 11:
+                arch = 'armv7s'
+        arcs.append(arch)
     return arcs
 
 

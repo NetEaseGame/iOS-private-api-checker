@@ -4,11 +4,12 @@ Created on 2015年10月27日
 iOS private api检查入口
 @author: hzwangzhiwei
 '''
-import os
+import os, shutil
+from utils import report_utils, utils
 from dump import otool_utils
 from api import app_utils, api_utils
 from db import api_dbs
-
+from app.utils import IpaParse
 
 def get_executable_path(ipa_path, pid):
     '''
@@ -60,7 +61,7 @@ def check_private_api(app, pid):
     
     
     methods_in_app = api_utils.intersection_api(app_apis, inter_api) #app中的私有方法
-    methods_not_in_app = inter_api# inter_method - methods_in_app # 不在app中的私有方法
+    methods_not_in_app = inter_api # inter_method - methods_in_app # 不在app中的私有方法
     
     return methods_in_app, methods_not_in_app, private
 
@@ -74,38 +75,89 @@ def check_xcode_ghost(app):
     return app_utils.check_xcode_ghost(app)
 
 
+def batch_check(app_folder, excel_path):
+    '''
+    批量检测多个ipa，并产生excel报告
+    '''
+    #遍历folder，找出.ipa文件
+    if not app_folder or not excel_path:
+        return False
+
+    check_results = []
+    ipa_list = os.listdir(app_folder)
+    for ipa in ipa_list:
+        result = {} #每个app的检查结果
+        print 'start check :', ipa
+        if ipa.endswith('.ipa'):
+            ipa_path = os.path.join(app_folder, ipa)
+            pid = utils.get_unique_str()
+            #获得ipa信息
+            ipa_parse = IpaParse.IpaParse(ipa_path)
+            result['name'] = ipa_parse.app_name()
+            result['version'] = ipa_parse.version()
+            result['bundle_id'] = ipa_parse.bundle_identifier()
+            result['tar_version'] = ipa_parse.target_os_version()
+            result['min_version'] = ipa_parse.minimum_os_version()
+            #检查ios私有api
+            app = get_executable_path(ipa_path, pid)
+            methods_in_app, methods_not_in_app, private = check_private_api(app, pid)
+            result['private_apis'] = methods_in_app
+            result['private_frameworks'] = list(private)
+            #检查ipa 64支持情况
+            arcs = check_architectures(app)
+            result['arcs'] = arcs
+            #检查ghost情况
+            ghost = check_xcode_ghost(app)
+            result['ghost'] = ghost
+
+            check_results.append(result)
+
+            cur_dir = os.getcwd() #删除检查临时目录
+            dest_tmp = os.path.join(cur_dir, 'tmp/' + pid)
+            if os.path.exists(dest_tmp):
+                shutil.rmtree(dest_tmp)
+
+    #将结果转化成excel报告
+    report_utils.excel_report(check_results, excel_path)
+    return excel_path
+
 if __name__ == '__main__':
-    ipa_path = "/Users/summer-wj/code/svn/ljsg_for_netease_20150928_resign.ipa"
-#     cur_dir = os.getcwd()
-#     dest = os.path.join(cur_dir, 'tmp')
-#     app_path = app_utils.unzip_ipa(ipa_path, dest)
-#     print app_path
+    #######
+    #check one app
+    # ipa_path = "/Users/summer-wj/code/svn/ljsg_for_netease_20150928_resign.ipa"
     
-    private_1 = open("tmp/private_1.txt", "w")
-    private_2 = open("tmp/private_2.txt", "w")
-    #将strings内容输出到文件中
-    pid = app_utils.get_unique_str()
-    app = get_executable_path(ipa_path, pid)
-    print app
-    arcs = check_architectures(app)
-    print arcs
-    a, b, c = check_private_api(app, pid)
-    print "=" * 50
-    print len(a), "Private Methods in App:"
-    print "*" * 50
-    for aa in a:
-        print aa
-        print >>private_1, aa
+    # private_1 = open("tmp/private_1.txt", "w")
+    # private_2 = open("tmp/private_2.txt", "w")
+    # #将strings内容输出到文件中
+    # pid = app_utils.get_unique_str()
+    # app = get_executable_path(ipa_path, pid)
+    # print app
+    # arcs = check_architectures(app)
+    # print arcs
+    # a, b, c = check_private_api(app, pid)
+    # print "=" * 50
+    # print len(a), "Private Methods in App:"
+    # print "*" * 50
+    # for aa in a:
+    #     print aa
+    #     print >>private_1, aa
      
-    print "=" * 50
-    print len(b), "Private Methods not in App, May in Framework Used:"
-    print "*" * 50
-    for bb in b:
-        print >>private_2, bb
+    # print "=" * 50
+    # print len(b), "Private Methods not in App, May in Framework Used:"
+    # print "*" * 50
+    # for bb in b:
+    #     print >>private_2, bb
      
-    print "=" * 50
-    print len(c), "Private Framework in App:"
-    print "*" * 50
-    #for cc in c:
-    #    print cc
+    # print "=" * 50
+    # print len(c), "Private Framework in App:"
+    # print "*" * 50
+
+    ##########
+    #test batch check ipa
+    cwd = os.getcwd()
+    excel_path = os.path.join(cwd, 'tmp/' + utils.get_unique_str() + '.xlsx')
+    print excel_path
+    ipa_folder = '/Users/netease/Downloads/ipas/mg/'
+    print batch_check(ipa_folder, excel_path)
+
     

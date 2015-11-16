@@ -16,11 +16,20 @@ def delete_apis_by_sdk(table_name, sdk):
     sql = "delete from " + table_name + " where sdk = ?;"
     return SqliteHandler().exec_update(sql, (sdk, ))
 
+private_apis = []
 
 def get_private_api_list():
-    sql = "select * from private_apis group by api_name;"
-    params = ()
-    return SqliteHandler().exec_select(sql, params)
+    '''
+    缓存数据，批量检查的时候，减少sql io
+    '''
+    global private_apis
+    if not private_apis:
+        print '~~~~~~~~~~~~~~~select'
+        sql = "select * from private_apis group by api_name;"
+        params = ()
+        private_apis = SqliteHandler().exec_select(sql, params)
+    
+    return private_apis
 
 
 #获得所有的私有框架dump出来的api

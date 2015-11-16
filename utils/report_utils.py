@@ -17,17 +17,17 @@ def report_detail_sheet(result, excel):
     info:生成游戏检查的详细信息，每个app一页
     '''
     #app check info
-    name = result.get('name', '')
+    name = result.get('name', '无名字')
     version = result.get('version', '')
-    bundle_id = result.get('version', '')
+    bundle_id = result.get('bundle_id', '')
     tar_version = result.get('tar_version', '')
     min_version = result.get('min_version', '')
     private_apis = result.get('private_apis', '')
     private_frameworks = result.get('private_frameworks', '')
     ghost = result.get('ghost', '')
     arcs = result.get('arcs', '')
-    
-    detail_sheet = excel.add_worksheet(result.get('name', '无名字'))
+
+    detail_sheet = excel.add_worksheet(result.get('sheet_name', ''))
     #title
     title_style = excel.add_format({'bold': True, 'align': 'center', 'font_size': 16, 'valign': 'vcenter', 'fg_color': '#fff2cc'})
     detail_sheet.merge_range('A1:J2', 'APP检查报告 - ' + name, title_style)
@@ -57,7 +57,7 @@ def report_detail_sheet(result, excel):
     
     #ghost
     detail_sheet.merge_range('A4:B4', 'Xcode Ghost', header_style)
-    detail_sheet.write('C4:C4', ghost, text_style)
+    detail_sheet.write('C4:C4', _ghost_2_text(ghost), text_style)
     #arcs
     detail_sheet.merge_range('D4:E4', 'Architectures', header_style)
     detail_sheet.merge_range('F4:J4', ' / '.join(arcs), text_style)
@@ -146,22 +146,37 @@ def report_outline_sheet(private_results, excel):
     cnt = 4
     for result in private_results:
         ouline_sheet.write(cnt, 0, cnt - 3, text_format) #A
-        name = result.get('name', '')
-        ouline_sheet.write(cnt, 1, name) #B
-        ouline_sheet.write_url(cnt, 1, 'internal:' + name + '!' + xl_rowcol_to_cell_fast(0, 0), url_format, name) 
+        # ouline_sheet.write(cnt, 1, result.get('name', '')) #B
+        ouline_sheet.write_url(cnt, 1, 'internal:' + result.get('sheet_name', '') + '!' + xl_rowcol_to_cell_fast(0, 0), url_format, result.get('name', '')) 
         ouline_sheet.write(cnt, 2, result.get('version', ''), text_format) #C
         ouline_sheet.write(cnt, 3, result.get('bundle_id', ''), text_format) #D
         ouline_sheet.write(cnt, 4, result.get('tar_version', ''), text_format) #E
         ouline_sheet.write(cnt, 5, result.get('min_version', ''), text_format) #F
         
         ouline_sheet.write(cnt, 6, str(len(result.get('private_apis', []))) + ' / ' + str(len(result.get('private_frameworks', []))), text_format) #G
-        
-        ouline_sheet.write(cnt, 7, result.get('ghost', ''), text_format) #H
+        ouline_sheet.write(cnt, 7, _ghost_2_text(result.get('ghost', '')), text_format) #H
         ouline_sheet.write(cnt, 8, ' / '.join(result.get('arcs', ''))) #I
         
         cnt = cnt + 1
     
     return excel
+
+def _ghost_2_text(ghost):
+    r = '未检测'
+    if ghost:
+        r = '已感染'
+    else:
+        r = '安全'
+    return r
+
+def _pre_process(private_results):
+    results = []
+    cnt = 1
+    for result in private_results:
+        result['sheet_name'] = str(cnt) + '.' + result.get('name', '无APP名字')
+        results.append(result)
+        cnt = cnt + 1
+    return results
 
 def excel_report(private_results, excel_path):
     '''
@@ -172,7 +187,8 @@ def excel_report(private_results, excel_path):
     private_results为数组结构，里面为检查的结果字典
     '''
     if private_results and isinstance(private_results, list):
-        
+        private_results = _pre_process(private_results)
+
         excel_name = excel_path
         
         excel = xlsxwriter.Workbook(excel_name)
