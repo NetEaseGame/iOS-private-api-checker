@@ -68,3 +68,5 @@ app/static/upload/*.ipa
 *.db
 docSet*
 utils/*.xlsx
+*.DS_Store
+
