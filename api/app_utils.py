@@ -141,10 +141,36 @@ def check_architectures(app):
         cpu_subtype = header.header.cpusubtype
         arch = str(mach_o.CPU_TYPE_NAMES.get(cpu_type, cpu_type)).lower()
         if cpu_type == 12:
-            if cpu_subtype == 9:
+            if cpu_subtype == 0:
+                arch = 'armall'
+            elif cpu_subtype == 5:
+                arch = 'armv4t'
+            elif cpu_subtype == 6:
+                arch = 'armv6'
+            elif cpu_subtype == 7:
+                arch = 'armv5tej'
+            elif cpu_subtype == 8:
+                arch = 'arm_xscale'
+            elif cpu_subtype == 9:
                 arch = 'armv7'
+            elif cpu_subtype == 10:
+                arch = 'armv7f'
             elif cpu_subtype == 11:
                 arch = 'armv7s'
+            elif cpu_subtype == 12:
+                arch = 'armv7k'
+            elif cpu_subtype == 13:
+                arch = 'armv8'
+            elif cpu_subtype == 14:
+                arch = 'armv6m'
+            elif cpu_subtype == 15:
+                arch = 'armv7m'
+            elif cpu_subtype == 16:
+                arch = 'armv7em'
+            
+        elif cpu_type == 16777228:
+            arch = 'arm64'
+
         arcs.append(arch)
     return arcs
 

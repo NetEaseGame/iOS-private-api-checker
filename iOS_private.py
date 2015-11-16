@@ -160,4 +160,9 @@ if __name__ == '__main__':
     ipa_folder = '/Users/netease/Downloads/ipas/mg/'
     print batch_check(ipa_folder, excel_path)
 
-    
+    #########
+    #test check arcs
+    # app_path = '/Users/netease/Downloads/ipas/mg/Payload'
+    # app = app_utils.get_executable_file(app_path)
+    # print check_architectures(app)
+
