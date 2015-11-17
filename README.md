@@ -4,11 +4,14 @@
 
 ### 一、功能 ###
 
-目前功能主要有三：
+目前功能主要有以下：
 
 1. 从ipa中提取一些基本信息，例如app名字，sdk版本，包名等，可以辅助QA日常工作。
 2. ipa架构检查，可以看出是否支持64位架构，可以辅助AppStore提审。
 3. ipa使用私有api情况，可以辅助AppStore提审。
+4. ipa info和provision配置项的检查，获得授权设备udid（参考项目iOS-checkIPA）。
+5. 获取签名信息。
+6. 批量检查APP，并生成excel报告，截图见下方。
 
 ### 二、如何使用 ###
 
@@ -29,17 +32,31 @@
 
 2. 使用Web上传运行的方式，运行python run_web.py（请先配置flask运行环境），然后浏览器输入127.0.0.1:9527 将ipa拖入上传框等待即可看到检查结果。
 
+3. 使用batch_check方法批量运行目录中的ipa，并生成excel报告。
+
+### 三、Screenshot ###
+
+ - 网页检查展示
+
 ![web_screenshot](screenshot/web_screenshot.png)
 
+ - 批量检测生成excel报告概要
 
-### 三、参考项目 ###
+![excel_report_outline](screenshot/excel_report_outline.png)
+
+ - excel报告详细页
+
+![excel_report_detail](screenshot/excel_report_detail.png)
+
+### 四、参考项目 ###
 
  - [RuntimeBrowser](https://github.com/nst/RuntimeBrowser/tree/master/tools/ios_headers_history)
  - [XlsxWriter](https://github.com/jmcnamara/XlsxWriter)
+ - [iOS-checkIPA](https://github.com/apperian/iOS-checkIPA)
  - [iOS-api-scan.md](iOS-api-scan.md)
 
 
-### 四、Note ###
+### 五、Note ###
 
 1. `私有的api ＝ (class-dump Framework下的库生成的头文件中的api - (Framework下的头文件里的api = 有文档的api + 没有文档的api)) + PrivateFramework下的api`。
 2. 私有api在公开的Framework及私有的PrivateFramework都有。
