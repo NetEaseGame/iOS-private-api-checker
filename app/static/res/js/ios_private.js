@@ -8,14 +8,16 @@ var myDropzone = new Dropzone("#ipa_file", {
 		data = JSON.parse(data);
 		if (data.success == 1) {
 			//显示app信息
-			$('#app_name').text(data.data.app_name);
+			$('#app_name').text(data.data.name);
 			$('#version').text(data.data.version);
-			$('#bundle_identifier').text(data.data.bundle_identifier);
-			$('#target_os_version').text(data.data.target_os_version);
-			$('#minimum_os_version').text(data.data.minimum_os_version);
-			$('#app_name').text(data.data.app_name);
+			$('#bundle_identifier').text(data.data.bundle_id);
+			$('#target_os_version').text(data.data.tar_version);
+			$('#minimum_os_version').text(data.data.min_version);
 			//显示ipa的架构信息
-			$('#app_arcs').text(data.data.arcs.join(' / '))          
+			$('#app_arcs').text(data.data.arcs.join(' / '));
+			$('#minimum_os_version').text(data.data.min_version);
+			$('#profile_type').text(data.data.profile_type);
+			$('#expiration').text(data.data.expiration);
 			//显示私有api信息
 			$('#api_in_app div.api_section').remove();
 			for (var i = 0; i < data.data.methods_in_app.length; i++) {

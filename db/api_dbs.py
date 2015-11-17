@@ -24,7 +24,6 @@ def get_private_api_list():
     '''
     global private_apis
     if not private_apis:
-        print '~~~~~~~~~~~~~~~select'
         sql = "select * from private_apis group by api_name;"
         params = ()
         private_apis = SqliteHandler().exec_select(sql, params)

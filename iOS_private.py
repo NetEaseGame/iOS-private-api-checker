@@ -6,10 +6,11 @@ iOS private api检查入口
 '''
 import os, shutil
 from utils import report_utils, utils
-from dump import otool_utils
+from dump import otool_utils, codesign_utils
 from api import app_utils, api_utils
 from db import api_dbs
-from app.utils import IpaParse
+# from app.utils import IpaParse
+from app.utils import checkipa
 
 def get_executable_path(ipa_path, pid):
     '''
@@ -74,6 +75,13 @@ def check_architectures(app):
 def check_xcode_ghost(app):
     return app_utils.check_xcode_ghost(app)
 
+#检查info和provision文件，并获取建议和错误配置
+def check_app_info_and_provision(ipa):
+    return checkipa.process_ipa(ipa)
+
+#检查codesign信息
+def check_codesign(app):
+    return codesign_utils.codesignapp(app)
 
 def batch_check(app_folder, excel_path):
     '''
@@ -91,13 +99,16 @@ def batch_check(app_folder, excel_path):
         if ipa.endswith('.ipa'):
             ipa_path = os.path.join(app_folder, ipa)
             pid = utils.get_unique_str()
-            #获得ipa信息
-            ipa_parse = IpaParse.IpaParse(ipa_path)
-            result['name'] = ipa_parse.app_name()
-            result['version'] = ipa_parse.version()
-            result['bundle_id'] = ipa_parse.bundle_identifier()
-            result['tar_version'] = ipa_parse.target_os_version()
-            result['min_version'] = ipa_parse.minimum_os_version()
+            #获得ipa信息和静态检查
+            # ipa_parse = IpaParse.IpaParse(ipa_path)
+            # result['name'] = ipa_parse.app_name()
+            # result['version'] = ipa_parse.version()
+            # result['bundle_id'] = ipa_parse.bundle_identifier()
+            # result['tar_version'] = ipa_parse.target_os_version()
+            # result['min_version'] = ipa_parse.minimum_os_version()
+            rsts = check_app_info_and_provision(ipa_path)
+            for key in rsts.keys():
+                result[key] = rsts[key]
             #检查ios私有api
             app = get_executable_path(ipa_path, pid)
             methods_in_app, methods_not_in_app, private = check_private_api(app, pid)
@@ -109,6 +120,9 @@ def batch_check(app_folder, excel_path):
             #检查ghost情况
             ghost = check_xcode_ghost(app)
             result['ghost'] = ghost
+            #检查codesign
+            codesign = check_codesign(app)
+            result['codesign'] = codesign
 
             check_results.append(result)
 
@@ -116,6 +130,7 @@ def batch_check(app_folder, excel_path):
             dest_tmp = os.path.join(cur_dir, 'tmp/' + pid)
             if os.path.exists(dest_tmp):
                 shutil.rmtree(dest_tmp)
+
 
     #将结果转化成excel报告
     report_utils.excel_report(check_results, excel_path)
@@ -156,6 +171,7 @@ if __name__ == '__main__':
     #test batch check ipa
     cwd = os.getcwd()
     excel_path = os.path.join(cwd, 'tmp/' + utils.get_unique_str() + '.xlsx')
+    # excel_path = os.path.join(cwd, 'tmp/test.xlsx') # for test
     print excel_path
     ipa_folder = '/Users/netease/Downloads/ipas/mg/'
     print batch_check(ipa_folder, excel_path)

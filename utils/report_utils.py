@@ -7,7 +7,7 @@ Created on 2015年11月13日
 import utils
 from lib import xlsxwriter
 
-import sys
+import sys, time
 from lib.xlsxwriter.utility import xl_rowcol_to_cell_fast
 reload(sys)
 sys.setdefaultencoding('utf8')
@@ -22,10 +22,17 @@ def report_detail_sheet(result, excel):
     bundle_id = result.get('bundle_id', '')
     tar_version = result.get('tar_version', '')
     min_version = result.get('min_version', '')
+
     private_apis = result.get('private_apis', '')
     private_frameworks = result.get('private_frameworks', '')
     ghost = result.get('ghost', '')
     arcs = result.get('arcs', '')
+
+    profile_type = result.get('profile_type', '')
+    codesign = result.get('codesign', '')
+    provisioned_devices = result.get('provisioned_devices', [])
+    warnings = result.get('warning', [])
+    errors = result.get('error', [])
 
     detail_sheet = excel.add_worksheet(result.get('sheet_name', ''))
     #title
@@ -35,41 +42,95 @@ def report_detail_sheet(result, excel):
     #app infomation show
     header_style = excel.add_format({'bold': True, 'align': 'center', 'fg_color': '#b6d7a8', 'border': 1})
     text_style = excel.add_format({'align': 'center', 'border': 1})
-    
+    text_left_style = excel.add_format({'align': 'left', 'border': 1})
+
     detail_sheet.set_column('A:J', 17)
     
-    detail_sheet.write(2, 0, '游戏名字', header_style) #A
-    detail_sheet.write(2, 1, name, text_style) #B
+    detail_sheet.write(2, 0, '游戏名字', header_style)
+    detail_sheet.write(2, 1, name, text_style)
     
-    detail_sheet.write(2, 2, '游戏版本', header_style) #C
-    detail_sheet.write(2, 3, version, text_style) #D
+    detail_sheet.write(2, 2, '游戏版本', header_style)
+    detail_sheet.write(2, 3, version, text_style)
     
-    detail_sheet.write(2, 4, 'Bundle ID', header_style) #E
-    detail_sheet.write(2, 5, bundle_id, text_style) #F
+    detail_sheet.write(2, 4, 'Bundle ID', header_style)
+    detail_sheet.write(2, 5, bundle_id, text_style)
     
-    detail_sheet.write(2, 6, 'Target Version', header_style) #G
-    detail_sheet.write(2, 7, tar_version, text_style) #H
+    detail_sheet.write(2, 6, 'Target Version', header_style)
+    detail_sheet.write(2, 7, tar_version, text_style)
     
-    detail_sheet.write(2, 8, 'Min Version', header_style) #I
-    detail_sheet.write(2, 9, min_version, text_style) #J
+    detail_sheet.write(2, 8, 'Min Version', header_style)
+    detail_sheet.write(2, 9, min_version, text_style)
     
-    #xcode ghost & arcs
+    #new row
+    detail_sheet.write(3, 0, 'Xcode Ghost', header_style)
+    detail_sheet.write(3, 1, _ghost_2_text(ghost), text_style)
     
-    #ghost
-    detail_sheet.merge_range('A4:B4', 'Xcode Ghost', header_style)
-    detail_sheet.write('C4:C4', _ghost_2_text(ghost), text_style)
-    #arcs
-    detail_sheet.merge_range('D4:E4', 'Architectures', header_style)
-    detail_sheet.merge_range('F4:J4', ' / '.join(arcs), text_style)
+    detail_sheet.write(3, 2, 'Architectures', header_style)
+    detail_sheet.write(3, 3, ' / '.join(arcs), text_style)
     
+    #new row
+    detail_sheet.write(4, 0, '证书类型', header_style)
+    detail_sheet.write(4, 1, profile_type, text_style)
+    
+    detail_sheet.write(4, 2, '认证设备', header_style)
+    detail_sheet.write(4, 3, len(provisioned_devices), text_style)
+    
+    #new row
+    detail_sheet.write(5, 0, '警告', header_style)
+    detail_sheet.write(5, 1, len(warnings), text_style)
+    detail_sheet.write(5, 2, '错误', header_style)
+    detail_sheet.write(5, 3, len(errors), text_style)
+
+    #code sign
+    detail_sheet.merge_range('E4:E6', 'Signature', header_style)
+    detail_sheet.merge_range('F4:J6', codesign, text_style)
+
     sub_title_style = excel.add_format({'bold': True, 'align': 'center', 'font_size': 14, 'valign': 'vcenter', 'fg_color': '#d9ead3', 'border': 1})
     
-    #private api
-    base_row = 5
-    detail_sheet.merge_range(base_row, 0, base_row, 9, 'Private API 私有API调用情况', sub_title_style)
+    base_row = 7
+    table_header_style = excel.add_format({'bold': True, 'align': 'center', 'fg_color': '#fff2cc'})
+
+    #warnings
+    detail_sheet.merge_range(base_row, 0, base_row, 9, 'APP配置项目中 Warning 情况', sub_title_style)
     base_row = base_row + 1
     
-    table_header_style = excel.add_format({'bold': True, 'align': 'center', 'fg_color': '#fff2cc'})
+    detail_sheet.write(base_row, 0, '#', table_header_style)
+    detail_sheet.merge_range(base_row, 1, base_row, 9, 'Warning Detail', table_header_style)
+    cnt = 0
+    if (len(warnings) > 0):
+        for temp in warnings:
+            base_row = base_row + 1
+            cnt  = cnt + 1
+            detail_sheet.write(base_row, 0, cnt, text_style)
+            detail_sheet.merge_range(base_row, 1, base_row, 9, temp['label'] + ': ' + temp['description'], text_left_style)
+    else:
+        base_row = base_row + 1
+        detail_sheet.merge_range(base_row, 0, base_row, 9, '无相关信息', text_style)
+    base_row = base_row + 2
+
+
+    #errors
+    detail_sheet.merge_range(base_row, 0, base_row, 9, 'APP配置项目中 Error 情况', sub_title_style)
+    base_row = base_row + 1
+    
+    detail_sheet.write(base_row, 0, '#', table_header_style)
+    detail_sheet.merge_range(base_row, 1, base_row, 9, 'Error Detail', table_header_style)
+    cnt = 0
+    if len(errors) > 0:
+        for temp in errors:
+            base_row = base_row + 1
+            cnt  = cnt + 1
+            detail_sheet.write(base_row, 0, cnt, text_style)
+            detail_sheet.merge_range(base_row, 1, base_row, 9, temp['label'] + ': ' + temp['description'], text_left_style)
+    else:
+        base_row = base_row + 1
+        detail_sheet.merge_range(base_row, 0, base_row, 9, '无相关信息', text_style)
+    base_row = base_row + 2
+
+
+    #private api
+    detail_sheet.merge_range(base_row, 0, base_row, 9, 'Private API 私有API调用情况', sub_title_style)
+    base_row = base_row + 1
     
     detail_sheet.write(base_row, 0, '#', table_header_style)
     detail_sheet.write(base_row, 1, 'Framework', table_header_style)
@@ -78,28 +139,57 @@ def report_detail_sheet(result, excel):
     detail_sheet.merge_range(base_row, 4, base_row, 9, 'API', table_header_style)
     
     cnt = 0
-    for api in private_apis:
+    if len(private_apis) > 0:
+        for api in private_apis:
+            base_row = base_row + 1
+            cnt  = cnt + 1
+            detail_sheet.write(base_row, 0, cnt, text_style)
+            detail_sheet.write(base_row, 1, api.get('framework', ''), text_style)
+            detail_sheet.write(base_row, 2, api.get('header_file', ''), text_style)
+            detail_sheet.write(base_row, 3, api.get('class_name', ''), text_style)
+            detail_sheet.merge_range(base_row, 4, base_row, 9, api.get('api_name', ''), text_style)
+    else:
         base_row = base_row + 1
-        cnt  = cnt + 1
-        detail_sheet.write(base_row, 0, cnt, text_style)
-        detail_sheet.write(base_row, 1, api.get('framework', ''), text_style)
-        detail_sheet.write(base_row, 2, api.get('header_file', ''), text_style)
-        detail_sheet.write(base_row, 3, api.get('class_name', ''), text_style)
-        detail_sheet.merge_range(base_row, 4, base_row, 9, api.get('api_name', ''), text_style)
-    
+        detail_sheet.merge_range(base_row, 0, base_row, 9, '无相关信息', text_style)
     base_row = base_row + 2
+
     #private framework使用情况
-    detail_sheet.merge_range(base_row, 0, base_row, 9, 'Private API 私有API调用情况', sub_title_style)
+    detail_sheet.merge_range(base_row, 0, base_row, 9, 'Private Framework 私有Framework调用情况', sub_title_style)
     base_row = base_row + 1
     
     detail_sheet.write(base_row, 0, '#', table_header_style)
     detail_sheet.merge_range(base_row, 1, base_row, 9, 'Framework', table_header_style)
     cnt = 0
-    for framework in private_frameworks:
+    if len(private_frameworks) > 0:
+        for framework in private_frameworks:
+            base_row = base_row + 1
+            cnt  = cnt + 1
+            detail_sheet.write(base_row, 0, cnt, text_style)
+            detail_sheet.merge_range(base_row, 1, base_row, 9, framework, text_style)
+    else:
         base_row = base_row + 1
-        cnt  = cnt + 1
-        detail_sheet.write(base_row, 0, cnt, text_style)
-        detail_sheet.merge_range(base_row, 1, base_row, 9, framework, text_style)
+        detail_sheet.merge_range(base_row, 0, base_row, 9, '无相关信息', text_style)
+    base_row = base_row + 2
+
+
+    #devices
+    detail_sheet.merge_range(base_row, 0, base_row, 9, 'Provisioned devices 授权安装的设备UDID列表', sub_title_style)
+    base_row = base_row + 1
+    
+    detail_sheet.write(base_row, 0, '#', table_header_style)
+    detail_sheet.merge_range(base_row, 1, base_row, 9, '设备UDID', table_header_style)
+    cnt = 0
+    if len(provisioned_devices) > 0:
+        for temp in provisioned_devices:
+            base_row = base_row + 1
+            cnt  = cnt + 1
+            detail_sheet.write(base_row, 0, cnt, text_style)
+            detail_sheet.merge_range(base_row, 1, base_row, 9, temp, text_style)
+    else:
+        base_row = base_row + 1
+        detail_sheet.merge_range(base_row, 0, base_row, 9, '无相关信息', text_style)
+    base_row = base_row + 2
+
     return excel
 
 def report_outline_sheet(private_results, excel):
@@ -109,7 +199,7 @@ def report_outline_sheet(private_results, excel):
     ouline_sheet = excel.add_worksheet('Outline - 检测结果总览')
     #title
     title_style = excel.add_format({'bold': True, 'align': 'center', 'font_size': 18, 'valign': 'vcenter', 'fg_color': '#b6d7a8'})
-    ouline_sheet.merge_range('A1:I3', '手游Appstore上线预审核报告', title_style)
+    ouline_sheet.merge_range('A1:M3', '手游Appstore上线预审核报告（%s）' % time.strftime("%Y-%m-%d", time.localtime()) , title_style)
     
     ########header
     header_style = excel.add_format({'bold': True, 'align': 'center', 'fg_color': '#fff2cc'})
@@ -119,8 +209,8 @@ def report_outline_sheet(private_results, excel):
     ouline_sheet.set_column('B:B', 20)
     ouline_sheet.set_column('C:D', 15)
     ouline_sheet.set_column('E:F', 20)
-    ouline_sheet.set_column('G:H', 15)
-    ouline_sheet.set_column('I:I', 50)
+    ouline_sheet.set_column('G:M', 15)
+    ouline_sheet.set_column('I:I', 20)
     #header
     ouline_sheet.write(3, 0, 'ID', header_style) #A
     ouline_sheet.write(3, 1, '游戏名称', header_style) #B
@@ -130,12 +220,26 @@ def report_outline_sheet(private_results, excel):
     ouline_sheet.write(3, 4, 'Target os version', header_style) #E
     ouline_sheet.write(3, 5, 'Minimum os version', header_style) #F
     
-    ouline_sheet.write(3, 6, '私有API', header_style) #G
-    ouline_sheet.write_comment('G4', '私有api是平台禁止使用的一些方法集合，如果app中使用，可能会导致上线被拒，并且给苹果留下不好的印象；此项包括私有API和私有Framework')
-    ouline_sheet.write(3, 7, 'XcodeGhost', header_style) #H
-    ouline_sheet.write_comment('H4', 'XcodeGhost 为国内xcode下载导致的内嵌代码事件')
-    ouline_sheet.write(3, 8, '架构', header_style) #I
-    ouline_sheet.write_comment('I4', 'appstore 在2014年底强制要求所有的上线app都必须支持64位架构')
+    ouline_sheet.write(3, 6, '设备数量', header_style) #G
+    ouline_sheet.write_comment('G4', 'appstore 在2014年底强制要求所有的上线app都必须支持64位架构')
+
+    ouline_sheet.write(3, 7, '架构', header_style) #H
+    ouline_sheet.write_comment('H4', 'appstore 在2014年底强制要求所有的上线app都必须支持64位架构')
+
+    ouline_sheet.write(3, 8, '证书类型', header_style) #I
+    ouline_sheet.write_comment('I4', '正式上线应该为 Enterprise，测试包一般为 Ad Hoc/Developer')
+
+    ouline_sheet.write(3, 9, 'Warnings数', header_style) #J
+    ouline_sheet.write_comment('J4', '一些配置项的警告信息，建议修改')
+
+    ouline_sheet.write(3, 10, 'Errors数', header_style) #K
+    ouline_sheet.write_comment('K4', '一些配置项的错误信息，强烈要求修复')
+
+    ouline_sheet.write(3, 11, '私有API', header_style) #L
+    ouline_sheet.write_comment('L4', '私有api是平台禁止使用的一些方法集合，如果app中使用，可能会导致上线被拒，并且给苹果留下不好的印象；此项包括私有API和私有Framework')
+    ouline_sheet.write(3, 12, 'XcodeGhost', header_style) #M
+    ouline_sheet.write_comment('M4', 'XcodeGhost 为国内xcode下载导致的内嵌代码事件')
+    
     #header
     
     #data
@@ -146,16 +250,19 @@ def report_outline_sheet(private_results, excel):
     cnt = 4
     for result in private_results:
         ouline_sheet.write(cnt, 0, cnt - 3, text_format) #A
-        # ouline_sheet.write(cnt, 1, result.get('name', '')) #B
         ouline_sheet.write_url(cnt, 1, 'internal:' + result.get('sheet_name', '') + '!' + xl_rowcol_to_cell_fast(0, 0), url_format, result.get('name', '')) 
-        ouline_sheet.write(cnt, 2, result.get('version', ''), text_format) #C
-        ouline_sheet.write(cnt, 3, result.get('bundle_id', ''), text_format) #D
-        ouline_sheet.write(cnt, 4, result.get('tar_version', ''), text_format) #E
-        ouline_sheet.write(cnt, 5, result.get('min_version', ''), text_format) #F
+        ouline_sheet.write(cnt, 2, result.get('version', ''), text_format)
+        ouline_sheet.write(cnt, 3, result.get('bundle_id', ''), text_format)
+        ouline_sheet.write(cnt, 4, result.get('tar_version', ''), text_format)
+        ouline_sheet.write(cnt, 5, result.get('min_version', ''), text_format)
+        ouline_sheet.write(cnt, 6, len(result.get('provisioned_devices', [])), text_format)
+        ouline_sheet.write(cnt, 7, ' / '.join(result.get('arcs', '')))
+        ouline_sheet.write(cnt, 8, result.get('profile_type', ''), text_format)
+        ouline_sheet.write(cnt, 9, len(result.get('warning', [])), text_format)
+        ouline_sheet.write(cnt, 10, len(result.get('error', [])), text_format)
+        ouline_sheet.write(cnt, 11, str(len(result.get('private_apis', []))) + ' / ' + str(len(result.get('private_frameworks', []))), text_format) #G
+        ouline_sheet.write(cnt, 12, _ghost_2_text(result.get('ghost', '')), text_format) #H
         
-        ouline_sheet.write(cnt, 6, str(len(result.get('private_apis', []))) + ' / ' + str(len(result.get('private_frameworks', []))), text_format) #G
-        ouline_sheet.write(cnt, 7, _ghost_2_text(result.get('ghost', '')), text_format) #H
-        ouline_sheet.write(cnt, 8, ' / '.join(result.get('arcs', ''))) #I
         
         cnt = cnt + 1
     
