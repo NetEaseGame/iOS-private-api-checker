@@ -24,12 +24,25 @@ def get_private_api_list():
     '''
     global private_apis
     if not private_apis:
-        sql = "select * from private_apis group by api_name;"
+        sql = "select * from private_apis group by api_name having private_apis.api_name not in (select api_name from whitelist group by api_name);"
         params = ()
         private_apis = SqliteHandler().exec_select(sql, params)
     
     return private_apis
 
+white_apis = []
+def get_white_api_list():
+    '''
+    白名单中的api
+    缓存数据，批量检查的时候，减少sql io
+    '''
+    global white_apis
+    if not white_apis:
+        sql = "select * from whitelist group by api_name;"
+        params = ()
+        private_apis = SqliteHandler().exec_select(sql, params)
+    
+    return private_apis
 
 #获得所有的私有框架dump出来的api
 def get_private_framework_dump_apis(sdk):

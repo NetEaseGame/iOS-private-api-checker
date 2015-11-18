@@ -40,10 +40,10 @@ def check_private_api(app, pid):
 
     left = strings - app_varibles #去除一些关键字，剩余app中的一些关键词
     
-    api_set = api_dbs.get_private_api_list() #数据库中的私有api
+    api_set = api_dbs.get_private_api_list() #数据库中的私有api，去除了whitelist白名单
     print 'private length:', len(api_set)
     inter_api = api_utils.intersection_list_and_api(left, api_set) # app中的api和数据库中的私有api取交集，获得app中的私有api关键字数据
-    
+
     app_methods = app_utils.get_app_methods(app, pid) #app中的方法名
     app_apis = []
     for m in app_methods:
@@ -83,6 +83,11 @@ def check_app_info_and_provision(ipa):
 def check_codesign(app):
     return codesign_utils.codesignapp(app)
 
+#ipa的md5
+def get_file_md5(ipa):
+    return app_utils.file_md5(ipa)
+
+
 def batch_check(app_folder, excel_path):
     '''
     批量检测多个ipa，并产生excel报告
@@ -106,6 +111,9 @@ def batch_check(app_folder, excel_path):
             # result['bundle_id'] = ipa_parse.bundle_identifier()
             # result['tar_version'] = ipa_parse.target_os_version()
             # result['min_version'] = ipa_parse.minimum_os_version()
+            result['md5'] = get_file_md5(ipa_path)
+            print result['md5']
+
             rsts = check_app_info_and_provision(ipa_path)
             for key in rsts.keys():
                 result[key] = rsts[key]

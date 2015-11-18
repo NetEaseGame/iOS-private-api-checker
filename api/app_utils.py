@@ -10,6 +10,7 @@ import subprocess
 from api import api_helpers
 from dump import class_dump_utils
 import zipfile
+from hashlib import md5
 
 def unzip_ipa(ipa_path, dest_path):
     '''
@@ -186,6 +187,12 @@ def check_xcode_ghost(app):
     
     return xcode_ghost_keyword in output
     
+#获得文件的md5值，便于在检测之后，判断检测文件和上传文件是否对应
+def file_md5(file_path):
+    m = md5()
+    f = open(file_path, 'rb')
+    m.update(f.read())
+    return m.hexdigest()
 
 def get_unique_str():
     #随机的名字，可以用于上传文件等等不重复，但有一定时间意义的名字
