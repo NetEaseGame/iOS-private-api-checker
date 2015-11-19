@@ -29,9 +29,11 @@ def get_executable_file(path):
 
     cmd = u"python -mmacholib find %s" % (path)
     out = subprocess.check_output(cmd.split())
-    out = out.strip().replace('\r\n', '').replace('\n', '')
-
-    return os.path.join(path, out)
+    if out:
+        out = out.split()
+        if out and len(out) > 0:
+             return os.path.join(path, out[0])
+    return False
     
 
 
@@ -40,34 +42,22 @@ def get_app_strings(app_path, pid):
     Args:
         app : the full path of the Mach-O file in app
     Returns:
-        outfile : the result file of the strings app
+        output : the result of the strings app
         
     info:strings - 显示文件中的可打印字符
     strings 的主要用途是确定非文本文件的包含的文本内容。
     """
-
+    print '-' * 10
+    print app_path
+    print '-' * 10
     cmd = "/usr/bin/strings %s" % app_path
     output = subprocess.check_output(cmd.split())
     
-    strings_file_name  = 'strings_' + os.path.basename(app_path) or 'strings'
-    cur_dir = os.getcwd()
-    strings_file_name = os.path.join(cur_dir, "tmp/" + pid + '/' + strings_file_name)
-    
-
-    strings = open(strings_file_name + ".txt", "w")
-    print >>strings, output #将strings内容输出到文件中
     return set(output.split())
 
 def get_app_variables(app, pid):
     "get all variables, properties, and interface name"
     dump_result = class_dump_utils.dump_app(app)
-
-    var_file_name  = 'dump_var_' + os.path.basename(app) or 'dump_var'
-    cur_dir = os.getcwd()
-    var_file_name = os.path.join(cur_dir, "tmp/" + pid + '/' + var_file_name)
-    
-    var_file = open(var_file_name + ".txt", "w")
-    print >>var_file, dump_result #将strings内容输出到文件中
 
     interface = re.compile("^@interface (\w*).*")
     protocol = re.compile("@protocoli (\w*)")
@@ -113,14 +103,6 @@ def get_app_methods(app, pid):
     info:获得app中的方法
     '''
     dump_result = class_dump_utils.dump_app(app)
-    methods_file_name  = 'method_' + os.path.basename(app) or 'app_methods'
-    cur_dir = os.getcwd()
-    methods_file_name = os.path.join(cur_dir, "tmp/" + pid + '/' + methods_file_name)
-    
-    strings = open(methods_file_name + ".txt", "w")
-    #print methods_file_name
-    print >>strings, dump_result 
-    #ret_methods = set()
     methods = api_helpers.extract(dump_result)
     #for m in methods:
     #    ret_methods = ret_methods.union(set(m["methods"]))
