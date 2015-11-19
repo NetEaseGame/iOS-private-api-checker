@@ -23,15 +23,13 @@ def get_executable_path(ipa_path, pid):
     dest = os.path.join(cur_dir, 'tmp/' + pid)
     if not os.path.exists(dest):
         os.mkdir(dest)
-    print dest
     app_path = app_utils.unzip_ipa(ipa_path, dest) #解压ipa，获得xxx.app目录路径
-    
     app = app_utils.get_executable_file(app_path)
+
     return app
 
 #检查私有api，返回三个参数
 def check_private_api(app, pid):
-    #print app
     strings = app_utils.get_app_strings(app, pid) #一般是app中的一些可打印文本
     #app中的私有库和公有库 .framework
     private, _ = otool_utils.otool_app(app)
@@ -104,31 +102,33 @@ def batch_check(app_folder, excel_path):
         if ipa.endswith('.ipa'):
             ipa_path = os.path.join(app_folder, ipa)
             pid = utils.get_unique_str()
-            #获得ipa信息和静态检查
-            # ipa_parse = IpaParse.IpaParse(ipa_path)
-            # result['name'] = ipa_parse.app_name()
-            # result['version'] = ipa_parse.version()
-            # result['bundle_id'] = ipa_parse.bundle_identifier()
-            # result['tar_version'] = ipa_parse.target_os_version()
-            # result['min_version'] = ipa_parse.minimum_os_version()
+            print 'get_file_md5', '+' * 10
             result['md5'] = get_file_md5(ipa_path)
-            print result['md5']
 
+            print 'check_app_info_and_provision', '+' * 10
             rsts = check_app_info_and_provision(ipa_path)
             for key in rsts.keys():
                 result[key] = rsts[key]
             #检查ios私有api
+            print 'check_private_api', '+' * 10
             app = get_executable_path(ipa_path, pid)
+            if not app:
+                #找不到math-o文件，说明不是正常的ipa，忽略
+                continue
+
             methods_in_app, methods_not_in_app, private = check_private_api(app, pid)
             result['private_apis'] = methods_in_app
             result['private_frameworks'] = list(private)
             #检查ipa 64支持情况
+            print 'check_architectures', '+' * 10
             arcs = check_architectures(app)
             result['arcs'] = arcs
             #检查ghost情况
+            print 'check_xcode_ghost', '+' * 10
             ghost = check_xcode_ghost(app)
             result['ghost'] = ghost
             #检查codesign
+            print 'check_private_api', '+' * 10
             codesign = check_codesign(app)
             result['codesign'] = codesign
 
@@ -181,7 +181,8 @@ if __name__ == '__main__':
     excel_path = os.path.join(cwd, 'tmp/' + utils.get_unique_str() + '.xlsx')
     # excel_path = os.path.join(cwd, 'tmp/test.xlsx') # for test
     print excel_path
-    ipa_folder = '/Users/netease/Downloads/ipas/mg/'
+    # ipa_folder = '/Users/netease/Downloads/ipas/mg/'
+    ipa_folder = '/Users/netease/Music/iTunes/iTunes Media/Mobile Applications/'
     print batch_check(ipa_folder, excel_path)
 
     #########
