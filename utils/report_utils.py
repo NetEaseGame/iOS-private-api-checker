@@ -17,6 +17,7 @@ def report_detail_sheet(result, excel):
     info:生成游戏检查的详细信息，每个app一页
     '''
     #app check info
+    md5 = result.get('md5', '无名字')
     name = result.get('name', '无名字')
     version = result.get('version', '')
     bundle_id = result.get('bundle_id', '')
@@ -46,48 +47,59 @@ def report_detail_sheet(result, excel):
 
     detail_sheet.set_column('A:J', 17)
     
-    detail_sheet.write(2, 0, '游戏名字', header_style)
-    detail_sheet.write(2, 1, name, text_style)
+    #new row
+    detail_sheet.write(2, 0, 'APP MD5', header_style)
+    detail_sheet.merge_range('B3:E3', md5, text_style)
     
-    detail_sheet.write(2, 2, '游戏版本', header_style)
-    detail_sheet.write(2, 3, version, text_style)
+    detail_sheet.write(2, 5, '检查日期', header_style)
+    detail_sheet.write(2, 6, time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), text_style)
+
+    detail_sheet.write(2, 7, '检查人', header_style)
+    detail_sheet.merge_range('I3:J3', '', text_style)
+
+    #new row
+    detail_sheet.write(3, 0, '游戏名字', header_style)
+    detail_sheet.write(3, 1, name, text_style)
     
-    detail_sheet.write(2, 4, 'Bundle ID', header_style)
-    detail_sheet.write(2, 5, bundle_id, text_style)
+    detail_sheet.write(3, 2, '游戏版本', header_style)
+    detail_sheet.write(3, 3, version, text_style)
     
-    detail_sheet.write(2, 6, 'Target Version', header_style)
-    detail_sheet.write(2, 7, tar_version, text_style)
+    detail_sheet.write(3, 4, 'Bundle ID', header_style)
+    detail_sheet.write(3, 5, bundle_id, text_style)
     
-    detail_sheet.write(2, 8, 'Min Version', header_style)
-    detail_sheet.write(2, 9, min_version, text_style)
+    detail_sheet.write(3, 6, 'Target Version', header_style)
+    detail_sheet.write(3, 7, tar_version, text_style)
+    
+    detail_sheet.write(3, 8, 'Min Version', header_style)
+    detail_sheet.write(3, 9, min_version, text_style)
     
     #new row
-    detail_sheet.write(3, 0, 'Xcode Ghost', header_style)
-    detail_sheet.write(3, 1, _ghost_2_text(ghost), text_style)
+    detail_sheet.write(4, 0, 'Xcode Ghost', header_style)
+    detail_sheet.write(4, 1, _ghost_2_text(ghost), text_style)
     
-    detail_sheet.write(3, 2, 'Architectures', header_style)
-    detail_sheet.write(3, 3, ' / '.join(arcs), text_style)
-    
-    #new row
-    detail_sheet.write(4, 0, '证书类型', header_style)
-    detail_sheet.write(4, 1, profile_type, text_style)
-    
-    detail_sheet.write(4, 2, '认证设备', header_style)
-    detail_sheet.write(4, 3, len(provisioned_devices), text_style)
+    detail_sheet.write(4, 2, 'Architectures', header_style)
+    detail_sheet.write(4, 3, ' / '.join(arcs), text_style)
     
     #new row
-    detail_sheet.write(5, 0, '警告', header_style)
-    detail_sheet.write(5, 1, len(warnings), text_style)
-    detail_sheet.write(5, 2, '错误', header_style)
-    detail_sheet.write(5, 3, len(errors), text_style)
+    detail_sheet.write(5, 0, '证书类型', header_style)
+    detail_sheet.write(5, 1, profile_type, text_style)
+    
+    detail_sheet.write(5, 2, '认证设备', header_style)
+    detail_sheet.write(5, 3, len(provisioned_devices), text_style)
+    
+    #new row
+    detail_sheet.write(6, 0, '警告', header_style)
+    detail_sheet.write(6, 1, len(warnings), text_style)
+    detail_sheet.write(6, 2, '错误', header_style)
+    detail_sheet.write(6, 3, len(errors), text_style)
 
     #code sign
-    detail_sheet.merge_range('E4:E6', 'Signature', header_style)
-    detail_sheet.merge_range('F4:J6', codesign, text_style)
+    detail_sheet.merge_range('E5:E7', 'Signature', header_style)
+    detail_sheet.merge_range('F5:J7', codesign, text_left_style)
 
     sub_title_style = excel.add_format({'bold': True, 'align': 'center', 'font_size': 14, 'valign': 'vcenter', 'fg_color': '#d9ead3', 'border': 1})
     
-    base_row = 7
+    base_row = 8
     table_header_style = excel.add_format({'bold': True, 'align': 'center', 'fg_color': '#fff2cc'})
 
     #warnings
@@ -221,7 +233,7 @@ def report_outline_sheet(private_results, excel):
     ouline_sheet.write(3, 5, 'Minimum os version', header_style) #F
     
     ouline_sheet.write(3, 6, '设备数量', header_style) #G
-    ouline_sheet.write_comment('G4', 'appstore 在2014年底强制要求所有的上线app都必须支持64位架构')
+    ouline_sheet.write_comment('G4', '具有APP安装证书的设备数量，即添加过设备的UDID')
 
     ouline_sheet.write(3, 7, '架构', header_style) #H
     ouline_sheet.write_comment('H4', 'appstore 在2014年底强制要求所有的上线app都必须支持64位架构')
