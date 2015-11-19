@@ -20,4 +20,8 @@ def codesignapp(app_path):
     """
     cmd = "/usr/bin/codesign -dvvv %s" % app_path
     out = commands.getstatusoutput(cmd)
+    if out and len(out) == 2 and out[0] == 0:
+        out = out[1]
+    else:
+        out = ''
     return out
