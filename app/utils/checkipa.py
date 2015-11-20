@@ -700,7 +700,7 @@ class ParseIPA(object):
     
         return False
 
-    def get(key):
+    def get(self, key):
         if key in self.info_plist_data:
             return self.info_plist_data[key]
         elif key in self.provision_data:

@@ -101,6 +101,52 @@ def check_codesign(app):
 def get_file_md5(ipa):
     return app_utils.file_md5(ipa)
 
+#检查单个的app，获得结果字典
+def check_ipa(ipa_path):
+    result = {} #每个app的检查结果
+    pid = utils.get_unique_str()
+    print '1.', '+' * 10, 'get_file_md5'
+    result['md5'] = get_file_md5(ipa_path)
+
+    print '2.', '+' * 10, 'check_app_info_and_provision'
+    rsts = check_app_info_and_provision(ipa_path)
+    for key in rsts.keys():
+        result[key] = rsts[key]
+    #检查ios私有api
+    print '3.', '+' * 10, 'check_private_api'
+    app = get_executable_path(ipa_path, pid)
+    if not app:
+        #找不到math-o文件，说明不是正常的ipa，忽略
+        return False
+
+    methods_in_app, _, private = check_private_api(app, pid)
+    result['private_apis'] = methods_in_app
+    # result['private_apis_not'] = _
+    result['private_frameworks'] = list(private)
+    #检查ipa 64支持情况
+    print '4.', '+' * 10, 'check_architectures'
+    arcs = check_architectures(app)
+    result['arcs'] = arcs
+    if len(arcs) < 2:
+        result['error'].append({'label': 'Architecture:',
+                    'description': 'app may be not support 64-bit'})
+    #检查ghost情况
+    print '5.', '+' * 10, 'check_xcode_ghost'
+    ghost = check_xcode_ghost(app)
+    result['ghost'] = ghost
+    #检查codesign
+    print '6.', '+' * 10, 'check_private_api'
+    codesign = check_codesign(app)
+    result['codesign'] = codesign
+
+    print '7.', '+' * 10, 'remove tmp files'
+    cur_dir = os.getcwd() #删除检查临时目录
+    dest_tmp = os.path.join(cur_dir, 'tmp/' + pid)
+    # print 'tmp:', dest_tmp
+    if os.path.exists(dest_tmp):
+        shutil.rmtree(dest_tmp)
+    
+    return result
 
 def batch_check(app_folder, excel_path):
     '''
@@ -113,54 +159,17 @@ def batch_check(app_folder, excel_path):
     check_results = []
     ipa_list = os.listdir(app_folder)
     for ipa in ipa_list:
-        result = {} #每个app的检查结果
         print 'start check :', ipa
         if ipa.endswith('.ipa'):
             ipa_path = os.path.join(app_folder, ipa)
-            pid = utils.get_unique_str()
-            print '1.', '+' * 10, 'get_file_md5'
-            result['md5'] = get_file_md5(ipa_path)
-
-            print '2.', '+' * 10, 'check_app_info_and_provision'
-            rsts = check_app_info_and_provision(ipa_path)
-            for key in rsts.keys():
-                result[key] = rsts[key]
-            #检查ios私有api
-            print '3.', '+' * 10, 'check_private_api'
-            app = get_executable_path(ipa_path, pid)
-            if not app:
-                #找不到math-o文件，说明不是正常的ipa，忽略
+            #单个app的检查结果
+            try:
+                r = check_ipa(ipa_path)
+                if r:
+                    check_results.append()
+            except Exception, e:
+                print e
                 continue
-
-            methods_in_app, _, private = check_private_api(app, pid)
-            result['private_apis'] = methods_in_app
-            # result['private_apis_not'] = _
-            result['private_frameworks'] = list(private)
-            #检查ipa 64支持情况
-            print '4.', '+' * 10, 'check_architectures'
-            arcs = check_architectures(app)
-            result['arcs'] = arcs
-            if len(arcs) < 2:
-                result['error'].append({'label': 'Architecture:',
-                            'description': 'app may be not support 64-bit'})
-            #检查ghost情况
-            print '5.', '+' * 10, 'check_xcode_ghost'
-            ghost = check_xcode_ghost(app)
-            result['ghost'] = ghost
-            #检查codesign
-            print '6.', '+' * 10, 'check_private_api'
-            codesign = check_codesign(app)
-            result['codesign'] = codesign
-
-            check_results.append(result)
-
-            print '7.', '+' * 10, 'remove tmp files'
-            cur_dir = os.getcwd() #删除检查临时目录
-            dest_tmp = os.path.join(cur_dir, 'tmp/' + pid)
-            # print 'tmp:', dest_tmp
-            if os.path.exists(dest_tmp):
-                shutil.rmtree(dest_tmp)
-
 
     #将结果转化成excel报告
     report_utils.excel_report(check_results, excel_path)
