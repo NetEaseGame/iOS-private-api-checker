@@ -32,20 +32,22 @@ def get_executable_path(ipa_path, pid):
 def check_private_api(app, pid):
     strings = app_utils.get_app_strings(app, pid) #一般是app中的一些可打印文本
     #app中的私有库和公有库 .framework
-    private, _ = otool_utils.otool_app(app)
-    
-    app_varibles = app_utils.get_app_variables(app, pid)
+    private, public = otool_utils.otool_app(app)
+    print '=' * 15
+    print 'private:', len(private)
+    print 'public', len(public)
+    print '=' * 15
 
-    left = strings - app_varibles #去除一些关键字，剩余app中的一些关键词
+    dump_result = app_utils.get_dump_result(app)
+    app_varibles = app_utils.get_app_variables(dump_result, pid) #app自定义的一些方法，不需要检查
+    left = strings - app_varibles #去除一些app中开发人员自定义的方法，剩余app中的一些字符串
     
-    api_set = api_dbs.get_private_api_list() #数据库中的私有api，去除了whitelist白名单
-    print 'private length:', len(api_set)
-    inter_api = api_utils.intersection_list_and_api(left, api_set) # app中的api和数据库中的私有api取交集，获得app中的私有api关键字数据
-
-    app_methods = app_utils.get_app_methods(app, pid) #app中的方法名
+    app_methods = app_utils.get_app_methods(dump_result, pid) #dump-class分析出app中的类和方法名
+    
     app_apis = []
     for m in app_methods:
         class_name = m["class"] if m["class"] != "ctype" else 'cur_app'
+        #if m["class"] != "ctype" else 'cur_app'
         method_list = m["methods"]
         m_type = m["type"]
         for m in method_list:
@@ -58,11 +60,25 @@ def check_private_api(app, pid):
             #tmp_api['framework'] = ''
             app_apis.append(tmp_api)
     
+    api_set = api_dbs.get_private_api_list(public) #数据库中的私有api，去除了whitelist白名单
+    print '=' * 15
+    print 'left app_varibles:', len(left)
+    print 'app_methods:', len(app_apis)
+    print 'private length:', len(api_set)
+    print '=' * 15
+    inter_api = api_utils.intersection_list_and_api(left, api_set) # app中的api和数据库中的私有api取交集，获得app中的私有api关键字数据
+
+    methods_in_app, method_not_in = api_utils.intersection_api(app_apis, inter_api) #app中的私有方法
+
+    print '=' * 15
+    print 'methods_in_app', len(methods_in_app)
+    print 'methods_not_in_app', len(method_not_in)
+    # for i in xrange(20):
+        # print methods_not_in_app[i]
+    print '=' * 15
     
-    methods_in_app = api_utils.intersection_api(app_apis, inter_api) #app中的私有方法
-    methods_not_in_app = inter_api # inter_method - methods_in_app # 不在app中的私有方法
     
-    return methods_in_app, methods_not_in_app, private
+    return methods_in_app, method_not_in, private
 
 #检查架构，返回架构数组
 def check_architectures(app):
@@ -102,40 +118,46 @@ def batch_check(app_folder, excel_path):
         if ipa.endswith('.ipa'):
             ipa_path = os.path.join(app_folder, ipa)
             pid = utils.get_unique_str()
-            print 'get_file_md5', '+' * 10
+            print '1.', '+' * 10, 'get_file_md5'
             result['md5'] = get_file_md5(ipa_path)
 
-            print 'check_app_info_and_provision', '+' * 10
+            print '2.', '+' * 10, 'check_app_info_and_provision'
             rsts = check_app_info_and_provision(ipa_path)
             for key in rsts.keys():
                 result[key] = rsts[key]
             #检查ios私有api
-            print 'check_private_api', '+' * 10
+            print '3.', '+' * 10, 'check_private_api'
             app = get_executable_path(ipa_path, pid)
             if not app:
                 #找不到math-o文件，说明不是正常的ipa，忽略
                 continue
 
-            methods_in_app, methods_not_in_app, private = check_private_api(app, pid)
+            methods_in_app, _, private = check_private_api(app, pid)
             result['private_apis'] = methods_in_app
+            # result['private_apis_not'] = _
             result['private_frameworks'] = list(private)
             #检查ipa 64支持情况
-            print 'check_architectures', '+' * 10
+            print '4.', '+' * 10, 'check_architectures'
             arcs = check_architectures(app)
             result['arcs'] = arcs
+            if len(arcs) < 2:
+                result['error'].append({'label': 'Architecture:',
+                            'description': 'app may be not support 64-bit'})
             #检查ghost情况
-            print 'check_xcode_ghost', '+' * 10
+            print '5.', '+' * 10, 'check_xcode_ghost'
             ghost = check_xcode_ghost(app)
             result['ghost'] = ghost
             #检查codesign
-            print 'check_private_api', '+' * 10
+            print '6.', '+' * 10, 'check_private_api'
             codesign = check_codesign(app)
             result['codesign'] = codesign
 
             check_results.append(result)
 
+            print '7.', '+' * 10, 'remove tmp files'
             cur_dir = os.getcwd() #删除检查临时目录
             dest_tmp = os.path.join(cur_dir, 'tmp/' + pid)
+            # print 'tmp:', dest_tmp
             if os.path.exists(dest_tmp):
                 shutil.rmtree(dest_tmp)
 
@@ -181,8 +203,9 @@ if __name__ == '__main__':
     excel_path = os.path.join(cwd, 'tmp/' + utils.get_unique_str() + '.xlsx')
     # excel_path = os.path.join(cwd, 'tmp/test.xlsx') # for test
     print excel_path
-    # ipa_folder = '/Users/netease/Downloads/ipas/mg/'
-    ipa_folder = '/Users/netease/Music/iTunes/iTunes Media/Mobile Applications/'
+    ipa_folder = '/Users/netease/Downloads/ipas/mg/'
+    # ipa_folder = '/Users/netease/Music/iTunes/iTunes Media/Mobile Applications/'
+    # ipa_folder = '/Users/netease/Music/iTunes/iTunes Media/'
     print batch_check(ipa_folder, excel_path)
 
     #########

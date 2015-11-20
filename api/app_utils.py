@@ -47,18 +47,21 @@ def get_app_strings(app_path, pid):
     info:strings - 显示文件中的可打印字符
     strings 的主要用途是确定非文本文件的包含的文本内容。
     """
-    print '-' * 10
-    print app_path
-    print '-' * 10
     cmd = "/usr/bin/strings %s" % app_path
     output = subprocess.check_output(cmd.split())
     
     return set(output.split())
 
-def get_app_variables(app, pid):
-    "get all variables, properties, and interface name"
-    dump_result = class_dump_utils.dump_app(app)
 
+def get_dump_result(app):
+    """
+    get app class-dump result, and cache it
+    """
+    dump_result = class_dump_utils.dump_app(app)
+    return dump_result
+
+def get_app_variables(dump_result, pid):
+    "get all variables, properties, and interface name"
     interface = re.compile("^@interface (\w*).*")
     protocol = re.compile("@protocoli (\w*)")
     private = re.compile("^\s*[\w <>]* [*]?(\w*)[\[\]\d]*;")
@@ -98,11 +101,11 @@ def get_app_variables(app, pid):
     return res
 
 
-def get_app_methods(app, pid):
+def get_app_methods(dump_result, pid):
     '''
     info:获得app中的方法
     '''
-    dump_result = class_dump_utils.dump_app(app)
+    # dump_result = class_dump_utils.dump_app(app)
     methods = api_helpers.extract(dump_result)
     #for m in methods:
     #    ret_methods = ret_methods.union(set(m["methods"]))

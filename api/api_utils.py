@@ -203,6 +203,7 @@ def intersection_api(apis_1, apis_2):
     return intersection of apis_1 and apis_2
         in apis_1, also in apis_2 
     '''
+    not_in_apis = []
     apis = []
     apis_1_dict = _apis_2_dict(apis_1)
 
@@ -210,15 +211,16 @@ def intersection_api(apis_1, apis_2):
         api_hash = api['api_name'] + '/' + api['class_name']
         if apis_1_dict.get(api_hash, None):
             apis.append(api)
+        else:
+            not_in_apis.append(api)
 
-    return apis
+    return apis, not_in_apis
 
 def intersection_list_and_api(l, apis):
     '''
     return intersection of api_name list and api dict list
     '''
     #def _apis_2_api_dict(apis):
-
     new_apis = []
     #new_methods = set()
     #apis_dict = _apis_2_dict(apis)
@@ -227,6 +229,5 @@ def intersection_list_and_api(l, apis):
         api_hash = api_tmp['api_name']
         if api_hash in l:
             new_apis.append(api_tmp)
-            #new_methods.add(api_hash)
 
     return new_apis

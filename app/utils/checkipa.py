@@ -62,6 +62,10 @@ class IntegrityCheck(object):
             results.append({'label': 'Bundleseed',
                             'description': 'does not exist'})
 
+        if self.errors['version']:
+            results.append({'label': 'Version',
+                            'description': 'app version is not exist'})
+
         if self.errors['appid']:
             results.append({'label': 'AppID',
                             'description': 'does not exist or has a problem'})
@@ -211,6 +215,7 @@ class IntegrityCheck(object):
     def process_checks(self):
         self.check_bundle_id()
         self.check_bundle_seed()
+        self.check_version()
         self.check_appid()
         self.check_push()
         self.check_dist_method()
@@ -373,6 +378,15 @@ class IntegrityCheck(object):
         else:  # key missing
             self.errors['bundleid'] = True
 
+    def check_version(self):
+        if 'CFBundleVersion' in self.data:
+            if self.data['CFBundleVersion'].strip() == "":
+                self.errors['version'] = True
+        else:
+            self.errors['version'] = True
+
+
+
     def check_bundle_seed(self):
         if 'ApplicationIdentifierPrefix' in self.profile:
             app_id_prefix = self.profile['ApplicationIdentifierPrefix']
@@ -433,6 +447,7 @@ class IntegrityCheck(object):
             "ipa_failure": False,
             "mobileprovision": False,
             "bundleid": False,
+            "version": False,
             "bundleseed": False,
             "appid": False,
             "appid_malformed": False,
