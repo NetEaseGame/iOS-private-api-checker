@@ -166,7 +166,7 @@ def batch_check(app_folder, excel_path):
             try:
                 r = check_ipa(ipa_path)
                 if r:
-                    check_results.append()
+                    check_results.append(r)
             except Exception, e:
                 print e
                 continue
