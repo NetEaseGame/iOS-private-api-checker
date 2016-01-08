@@ -61,10 +61,11 @@ def document_apis(sdk, db_path):
     for api in apiset:
         Z_PK = api['Z_PK']
         ZDECLAREDIN = api['ZDECLAREDIN']
+        ZCONTAINER = api['ZCONTAINER']
         # get containername from ZCONTAINER table
         container_name = ''
         if Z_PK:
-            container_name = dsidx_dbs.get_container_name(Z_PK, db_path) or ''
+            container_name = dsidx_dbs.get_container_name(ZCONTAINER, db_path) or ''
             # get frameworkname and headerpath from ZHEADER table
         
         framework_name = ''
