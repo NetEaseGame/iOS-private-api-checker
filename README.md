@@ -56,7 +56,7 @@
  - [RuntimeBrowser](https://github.com/nst/RuntimeBrowser/tree/master/tools/ios_headers_history)
  - [XlsxWriter](https://github.com/jmcnamara/XlsxWriter)
  - [iOS-checkIPA](https://github.com/apperian/iOS-checkIPA)
- - [iOS-api-scan.md](iOS-api-scan.md)
+ - [iOS-api-scan.md](https://github.com/mrmign/iOS-private-api-scanner/blob/master/iOS-api-scan.md)
 
 
 ### 五、Note ###
