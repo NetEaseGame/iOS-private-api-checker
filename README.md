@@ -64,3 +64,8 @@
 1. `私有的api ＝ (class-dump Framework下的库生成的头文件中的api - (Framework下的头文件里的api = 有文档的api + 没有文档的api)) + PrivateFramework下的api`。
 2. 私有api在公开的Framework及私有的PrivateFramework都有。
 3. 请暂时暂mac上运行，linux上暂时没有找到合适的、代替otool的工具，求推荐^^!
+
+
+## License
+
+This code is distributed under the terms and conditions of the GPL v2 license.

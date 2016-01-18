@@ -51,7 +51,7 @@ def undocument_apis(sdk):
 def document_apis(sdk, db_path):
     '''
     has document apis
-    info:获得带文档的api。(/Users/sngTest/Library/Developer/Shared/Documentation/DocSets/com.apple.adc.documentation.AppleiOS7.0.iOSLibrary.docset/Contents/Resources),在里面有个docSet.dsidx的文件，这就是Xcode针对api做的数据库，从这里可以获得带文档的api的各种信息了，从而有了带文档的api集合set_B。
+    info:获得带文档的api。(/Users/Test/Library/Developer/Shared/Documentation/DocSets/com.apple.adc.documentation.AppleiOS7.0.iOSLibrary.docset/Contents/Resources),在里面有个docSet.dsidx的文件，这就是Xcode针对api做的数据库，从这里可以获得带文档的api的各种信息了，从而有了带文档的api集合set_B。
     
     '''
     doc_apis = []
