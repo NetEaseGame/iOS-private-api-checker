@@ -52,6 +52,7 @@
 
 ### 四、参考项目 ###
 
+ - [iOS-private-api-scanner](https://github.com/mrmign/iOS-private-api-scanner)
  - [RuntimeBrowser](https://github.com/nst/RuntimeBrowser/tree/master/tools/ios_headers_history)
  - [XlsxWriter](https://github.com/jmcnamara/XlsxWriter)
  - [iOS-checkIPA](https://github.com/apperian/iOS-checkIPA)
