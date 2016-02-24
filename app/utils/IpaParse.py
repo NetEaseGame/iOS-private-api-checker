@@ -2,7 +2,7 @@
 '''
 Created on 2015年5月18日
 
-@author: hzwangzhiwei
+@author: atool
 '''
 import json
 import os
@@ -157,7 +157,7 @@ class IpaParse(object):
         return False
     
 if __name__ == '__main__':
-    parse = IpaParse(u'C:\\Users\\hzwangzhiwei\\Desktop\\H28_150514121833_resign.ipa')
+    parse = IpaParse(u'C:\\Users\\atool\\Desktop\\H28_150514121833_resign.ipa')
     
     print json.dumps(parse.all_info(), default = lambda o: o.__dict__)
     print parse.app_name()

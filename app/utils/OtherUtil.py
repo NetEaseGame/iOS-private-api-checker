@@ -2,7 +2,7 @@
 '''
 Created on 2015年8月21日
 
-@author: hzwangzhiwei
+@author: atool
 '''
 import hashlib
 import json

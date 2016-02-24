@@ -2,7 +2,7 @@
 '''
 Created on 2015年11月05日
 iOS private api检查 Web启动入口
-@author: hzwangzhiwei
+@author: atool
 '''
 
 

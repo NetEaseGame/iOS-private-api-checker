@@ -2,7 +2,7 @@
 '''
 Created on 2015年8月21日
 单利模式装饰器
-@author: hzwangzhiwei
+@author: atool
 '''
 def singleton(cls, *args, **kw):  
     instances = {}  

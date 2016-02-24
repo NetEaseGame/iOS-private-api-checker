@@ -4,7 +4,7 @@ Created on 2015年8月21日
 数据库、redis连接装饰器，用于view上，给需要数据连接的加上相应的装饰器即可
 保证在一次http连接过程中只需要进行一次mysql连接，减少内存占用，减少连接时间
 TODO 暂时不用
-@author: hzwangzhiwei
+@author: atool
 '''
 
 from functools import wraps

@@ -2,7 +2,7 @@
 '''
 Created on 2015年10月27日
 
-@author: hzwangzhiwei
+@author: atool
 '''
 import re
 

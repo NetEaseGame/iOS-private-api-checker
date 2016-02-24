@@ -223,7 +223,7 @@ class IntegrityCheck(object):
         self.check_expiration_date()
         self.check_interface_orientations()
 
-    #add by hzwangzhiwei
+    #add by atool
     def check_interface_orientations(self):
         if 'UISupportedInterfaceOrientations' in self.data and 'UISupportedInterfaceOrientations~ipad' in self.data:
             should_be = set(['UIInterfaceOrientationPortrait', 'UIInterfaceOrientationPortraitUpsideDown'])

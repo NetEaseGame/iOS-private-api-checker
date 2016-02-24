@@ -2,7 +2,7 @@
 '''
 Created on 2015年8月21日
 Redis操作的库
-@author: hzwangzhiwei
+@author: atool
 '''
 #数据库配置
 import redis

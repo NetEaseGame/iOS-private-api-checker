@@ -2,7 +2,7 @@
 '''
 Created on 2015年10月27日
 数据库操作类
-@author: hzwangzhiwei
+@author: atool
 '''
 import sqlite3
 from config import sqlite_info

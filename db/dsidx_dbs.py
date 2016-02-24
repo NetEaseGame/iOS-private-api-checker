@@ -2,7 +2,7 @@
 '''
 Created on 2015年10月27日
 .dsidx 文件解读
-@author: hzwangzhiwei
+@author: atool
 '''
 from db.sqlite_utils import SqliteHandler
 def get_dsidx_apis(db_path):

@@ -2,7 +2,7 @@
 '''
 Created on 2015年10月27日
 iOS private api检查入口
-@author: hzwangzhiwei
+@author: atool
 '''
 import os, shutil
 from utils import report_utils, utils

@@ -3,7 +3,7 @@
 Created on 2015年8月21日
 Mongo db 操作类
 TODO Test
-@author: hzwangzhiwei
+@author: atool
 '''
 from app import db_config
 import pymongo

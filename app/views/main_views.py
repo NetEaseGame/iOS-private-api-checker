@@ -2,7 +2,7 @@
 '''
 Created on 2015年6月16日
 
-@author: hzwangzhiwei
+@author: atool
 '''
 from app import app
 from app.utils import StringUtil, PathUtil, OtherUtil

@@ -2,7 +2,7 @@
 '''
 Created on 2015年10月27日
 各种api的获取方式，最后通过这些api计算出私有api的集合，用来后续计算app中是否使用私有api
-@author: hzwangzhiwei
+@author: atool
 '''
 from db import dsidx_dbs
 import os

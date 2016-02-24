@@ -2,7 +2,7 @@
 '''
 Created on 2015年11月17日
 
-@author: hzwangzhiwei
+@author: atool
 '''
 
 import commands

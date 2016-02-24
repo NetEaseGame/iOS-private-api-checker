@@ -2,7 +2,7 @@
 '''
 Created on 2015年8月25日
 
-@author: hzwangzhiwei
+@author: atool
 '''
 from app.dbs.inc.Redis import RedisMysqlCache
 from app.dbs.inc.Mysql import Mysql

@@ -2,7 +2,7 @@
 '''
 Created on 2015年10月27日
 一些预处理脚本
-@author: hzwangzhiwei
+@author: atool
 '''
 import os
 from db import api_dbs

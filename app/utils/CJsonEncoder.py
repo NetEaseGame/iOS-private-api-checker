@@ -2,7 +2,7 @@
 '''
 Created on 2015年1月27日
 
-@author: hzwangzhiwei
+@author: atool
 '''
 from datetime import date
 from datetime import datetime

@@ -2,7 +2,7 @@
 '''
 Created on 2015年6月16日
 all tasks
-@author: hzwangzhiwei
+@author: atool
 '''
 from app.wraps.async_task_wrap import async_task
 

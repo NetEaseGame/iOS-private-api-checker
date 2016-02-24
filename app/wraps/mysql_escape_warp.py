@@ -2,7 +2,7 @@
 '''
 Created on 2015年3月30日
 
-@author: hzwangzhiwei
+@author: atool
 '''
 
 from functools import wraps

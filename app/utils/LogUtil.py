@@ -2,7 +2,7 @@
 '''
 Created on 2015年8月24日
 
-@author: hzwangzhiwei
+@author: atool
 '''
 from app.utils import PathUtil, DateUtil
 

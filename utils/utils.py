@@ -2,7 +2,7 @@
 '''
 Created on 2015年11月3日
 
-@author: hzwangzhiwei
+@author: atool
 '''
 import os, sys
 from config import class_dump_z_path
